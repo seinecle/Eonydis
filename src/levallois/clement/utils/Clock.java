@@ -6,6 +6,9 @@ package levallois.clement.utils;
 
 //import GUI.GUI_Screen_1;
 
+import gui.GUIMain;
+
+
 /**
  *
  * @author C. Levallois
@@ -31,10 +34,9 @@ public class Clock {
         
         start = System.currentTimeMillis();
         logText = action + "..."+newLine;
-        //GUI_Screen_1.logArea.setText(GUI_Screen_1.logArea.getText().concat(logText));
-        //GUI_Screen_1.logArea.setCaretPosition(GUI_Screen_1.logArea.getText().length());
+        GUIMain.screen6.jLabel3.setText(GUIMain.screen6.jLabel3.getText().concat(logText));
+        GUIMain.screen6.jLabel3.setCaretPosition(GUIMain.screen6.jLabel3.getText().length());
 
-        //GUI_Screen_1.logArea.repaint();
         
         System.out.print(logText);
     }
@@ -71,8 +73,8 @@ public class Clock {
         
                
         }
-        //GUI_Screen_1.logArea.setText(GUI_Screen_1.logArea.getText().concat(logText));
-        //GUI_Screen_1.logArea.setCaretPosition(GUI_Screen_1.logArea.getText().length());
+        GUIMain.screen6.jLabel3.setText(GUIMain.screen6.jLabel3.getText().concat(logText));
+        GUIMain.screen6.jLabel3.setCaretPosition(GUIMain.screen6.jLabel3.getText().length());
 
 
     

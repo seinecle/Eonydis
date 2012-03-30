@@ -63,6 +63,7 @@ public class Main implements Runnable {
     public static TreeMap<Integer, String> mapPOSinTimePattern = new TreeMap();
     public static HashMap<String, Integer> mapOrderTimeFields = new HashMap();
     public static String[] orderOfTimeFieldsInUserPattern;
+    static int countNodesLoops = 0;
 
     public Main(String wk, String file) {
 
@@ -158,7 +159,7 @@ public class Main implements Runnable {
             Screen2.model.removeElement(edgeAttributes[i]);
 
         }
-        Screen2.toBeSelected.setText("<html>select time field</html>");
+        Screen2.toBeSelected.setText("<html>select <b>time field<b></html>");
         Screen2.count = 7;
 
 
@@ -331,8 +332,11 @@ public class Main implements Runnable {
 
         //iterate through the set of all nodes
         Iterator it = setNodes.iterator();
+
         System.out.println("Number of nodes: " + setNodes.size());
         while (it.hasNext()) {
+            countNodesLoops++;
+            GUIMain.screen6.jProgressBar1.setValue(Math.round((float)countNodesLoops/(float)(setNodes.size()+listTransactionsAndDates.size())*100));
 
             String currNode = (String) it.next();
 
@@ -367,11 +371,11 @@ public class Main implements Runnable {
         ListIterator<Triple<HashMap<String, String>, Pair<String, String>, LocalDate>> it = listTransactionsAndDates.listIterator();
         System.out.println("Number of transactions: " + listTransactionsAndDates.size());
         int edgeCounter = 0;
-        int transactionCounter = 0;
+        int transactionCounter = 1;
 
         //iterate through all transactions
         while (it.hasNext()) {
-
+            GUIMain.screen6.jProgressBar1.setValue(Math.round((float)(countNodesLoops+transactionCounter)/(float)(setNodes.size()+listTransactionsAndDates.size())*100));
             // this triple records the full transaction, the pair of node of this transaction, and the date of the transaction.
             Triple<HashMap<String, String>, Pair<String, String>, LocalDate> currTrans = it.next();
 

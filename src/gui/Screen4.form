@@ -52,14 +52,17 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="userIndicatedTimeFormatField" alignment="0" min="-2" pref="194" max="-2" attributes="0"/>
-                      <Component id="OKButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel3" alignment="0" min="-2" pref="154" max="-2" attributes="0"/>
+                      <Component id="jScrollPane1" min="-2" pref="389" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel2" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="userIndicatedTimeFormatField" alignment="0" min="-2" pref="194" max="-2" attributes="0"/>
+                          <Component id="OKButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel3" alignment="0" min="-2" pref="154" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -76,7 +79,9 @@
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="userIndicatedTimeFormatField" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="186" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" min="-2" pref="97" max="-2" attributes="0"/>
+                  <EmptySpace pref="52" max="32767" attributes="0"/>
                   <Component id="OKButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
               </Group>
@@ -94,7 +99,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;Indicate how the data and time is formatted in the relevant field:&lt;br&gt;-use the symbols yyyy,mm and dd to indicate years, months and days.&lt;br&gt;-use hh,ii and ss to indicate hours, minutes and seconds.&lt;br&gt;&lt;br&gt;Example:&lt;br&gt;For a date appearing as 31/12/1987;15:12:58, write:&lt;br&gt;dd#mm#yyyy#hh#ii#ss"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;Indicate the formar of your time field:&lt;br&gt;-use the symbols yyyy,mm and dd to indicate years, months and days.&lt;br&gt;-use hh,ii and ss to indicate hours, minutes and seconds.&lt;br&gt;&lt;br&gt;Example:&lt;br&gt;For a date appearing as 31/12/1987;15:12:58, write:&lt;br&gt;dd#mm#yyyy#hh#ii#ss"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="userIndicatedTimeFormatField">
@@ -121,6 +126,20 @@
             <Property name="text" type="java.lang.String" value="create evolving networks"/>
           </Properties>
         </Component>
+        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTextPane" name="jTextPane1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="note: be careful as any mistake will prevent the program from decoding your time field! In particular, don&apos;t forget that spaces also should be indicated with a #.Example: 12 / 1978 should be mm###yyyy because there are two spaces around the /"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
   </SubComponents>

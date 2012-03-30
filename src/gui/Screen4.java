@@ -38,6 +38,8 @@ public class Screen4 extends javax.swing.JFrame {
         userIndicatedTimeFormatField = new javax.swing.JTextField();
         OKButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
 
         jButton1.setText("jButton1");
 
@@ -48,7 +50,7 @@ public class Screen4 extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Script MT Bold", 0, 36)); // NOI18N
         jLabel1.setText("Eonydis");
 
-        jLabel2.setText("<html>Indicate how the data and time is formatted in the relevant field:<br>-use the symbols yyyy,mm and dd to indicate years, months and days.<br>-use hh,ii and ss to indicate hours, minutes and seconds.<br><br>Example:<br>For a date appearing as 31/12/1987;15:12:58, write:<br>dd#mm#yyyy#hh#ii#ss");
+        jLabel2.setText("<html>Indicate the formar of your time field:<br>-use the symbols yyyy,mm and dd to indicate years, months and days.<br>-use hh,ii and ss to indicate hours, minutes and seconds.<br><br>Example:<br>For a date appearing as 31/12/1987;15:12:58, write:<br>dd#mm#yyyy#hh#ii#ss");
 
         userIndicatedTimeFormatField.setText("mm#dd#yyyy#hh#ii");
         userIndicatedTimeFormatField.addActionListener(new java.awt.event.ActionListener() {
@@ -67,6 +69,9 @@ public class Screen4 extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 2, 13)); // NOI18N
         jLabel3.setText("create evolving networks");
 
+        jTextPane1.setText("note: be careful as any mistake will prevent the program from decoding your time field! In particular, don't forget that spaces also should be indicated with a #.Example: 12 / 1978 should be mm###yyyy because there are two spaces around the /");
+        jScrollPane1.setViewportView(jTextPane1);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -74,11 +79,13 @@ public class Screen4 extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(userIndicatedTimeFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(OKButton)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(userIndicatedTimeFormatField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(OKButton, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -92,7 +99,9 @@ public class Screen4 extends javax.swing.JFrame {
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(userIndicatedTimeFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 186, Short.MAX_VALUE)
+                .addGap(37, 37, 37)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
                 .addComponent(OKButton)
                 .addGap(27, 27, 27))
         );
@@ -128,7 +137,7 @@ public class Screen4 extends javax.swing.JFrame {
             Main.createGexfIntro();
             Main.createGexfNodes();
             Main.createGexfEdges();
-            GUIMain.screen6.jLabel3.setText("<html>process completed!<br>Check the folder of your initial csv file<br>to find the gexf file<br> This file is ready to be imported in Gephi</html>");
+            GUIMain.screen6.jLabel3.setText(GUIMain.screen6.jLabel3.getText().concat("process completed!\nCheck the folder of your initial csv file to find the gexf file. This file is ready to be imported in Gephi"));
             GUIMain.screen6.exitButton.setVisible(true);
 
         } catch (InterruptedException ex) {
@@ -187,6 +196,8 @@ public class Screen4 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextField userIndicatedTimeFormatField;
     // End of variables declaration//GEN-END:variables
 }
