@@ -4,11 +4,8 @@
  */
 package gui;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultListModel;
 import eonydis.Main;
+import javax.swing.DefaultListModel;
 
 /**
  *
@@ -18,6 +15,7 @@ public class Screen2 extends javax.swing.JFrame {
 
     private boolean OKButtonpressed;
     private Screen3 screen3;
+    private Screen4 screen4;
     public static int count = 1;
 
     /**
@@ -26,6 +24,7 @@ public class Screen2 extends javax.swing.JFrame {
     public Screen2() {
         initComponents();
         main();
+
     }
 
     /**
@@ -162,38 +161,29 @@ public class Screen2 extends javax.swing.JFrame {
                 Main.selectTargetAttributes();
                 OKButtonpressed = !OKButtonpressed;
             }
-            
+
             if (Screen2.count == 5 & OKButtonpressed) {
                 Main.selectEdgeWeight();
                 OKButtonpressed = !OKButtonpressed;
             }
+
             if (Screen2.count == 6 & OKButtonpressed) {
                 Main.selectEdgeAttributes();
                 OKButtonpressed = !OKButtonpressed;
-                try {
-                    Main.populateTransactions();
-                    Main.createGexfIntro();
-                    Main.createGexfNodes();
-                    Main.createGexfEdges();
-                    screen3 = new Screen3();
-                    screen3.setVisible(true);
-                    this.setVisible(false);
-                    
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Screen2.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(Screen2.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-
-
             }
+
+            if (Screen2.count == 7 & OKButtonpressed) {
+                Main.selectTimeField();
+                OKButtonpressed = !OKButtonpressed;
+                GUIMain.screen4.setVisible(true);
+                Main.screen2.setVisible(false);
+
+          }
     }//GEN-LAST:event_OKButtonActionPerformed
     }
         private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+            // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
-
 
     /**
      * @param args the command line arguments
@@ -243,13 +233,6 @@ public class Screen2 extends javax.swing.JFrame {
                 listHeaders.setViewportView(listFields);
 
 
-//        for (int i = 0;i<Main.headers.length;i++){
-//                
-//                listModel.addElement(Main.headers[i]);
-//                
-//            }
-//            
-//            listFields = new JList(listModel);
 
             }
         });

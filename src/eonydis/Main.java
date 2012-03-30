@@ -51,12 +51,16 @@ public class Main implements Runnable {
     public static String edgeWeight;
     public static String[] sourceAttributes;
     public static String[] targetAttributes;
+    public static String userDefinedTimeFormat;
     public static String timeField;
     String pathFile;
     public String nameFile;
     public static String source;
     public static String target;
     public static String currLine;
+    public static TreeMap<Integer, String> mapPOSinTimePattern = new TreeMap();
+    public static HashMap<String, Integer> mapOrderTimeFields = new HashMap();
+    public static String[] orderOfTimeFieldsInUserPattern;
 
     public Main(String wk, String file) {
 
@@ -68,10 +72,10 @@ public class Main implements Runnable {
     @Override
     public void run() {
         try {
-            
 
 
-            
+
+
             transactionsCsv = new CsvReader(pathFile + nameFile);
             readHeaders = transactionsCsv.readHeaders();
             headers = transactionsCsv.getHeaders();
@@ -132,18 +136,17 @@ public class Main implements Runnable {
         Screen2.count = 5;
     }
 
-    
     public static void selectEdgeWeight() {
-        edgeWeight = (String)Screen2.listFields.getSelectedValue();
+        edgeWeight = (String) Screen2.listFields.getSelectedValue();
         System.out.println("edge weight is: " + edgeWeight);
 
         Screen2.model.removeElement(edgeWeight);
-        
+
         Screen2.toBeSelected.setText("<html>select other <b>edge attribute(s)</b></html>");
         Screen2.count = 6;
 
     }
-    
+
     public static void selectEdgeAttributes() {
         List<String> listedgeAttributesSelected = Screen2.listFields.getSelectedValuesList();
         edgeAttributes = listedgeAttributesSelected.toArray(new String[Screen2.listFields.getSelectedValuesList().size()]);
@@ -156,39 +159,97 @@ public class Main implements Runnable {
 
         }
 
-        screen2.setVisible(false);
-    
-    //this appendix to SelectEdgeAttributes adds the edge attribute selected for weight - if any
-        
-        if (edgeWeight!=null){
-            String []tempEdgeAttributes = new String [edgeAttributes.length+1];
-            System.arraycopy(edgeAttributes,0,tempEdgeAttributes,0, edgeAttributes.length);
-            tempEdgeAttributes[tempEdgeAttributes.length-1] = edgeWeight;
+
+        //this appendix to SelectEdgeAttributes adds the edge attribute selected for weight - if any
+
+        if (edgeWeight != null) {
+            String[] tempEdgeAttributes = new String[edgeAttributes.length + 1];
+            System.arraycopy(edgeAttributes, 0, tempEdgeAttributes, 0, edgeAttributes.length);
+            tempEdgeAttributes[tempEdgeAttributes.length - 1] = edgeWeight;
             edgeAttributes = new String[tempEdgeAttributes.length];
-            System.arraycopy(tempEdgeAttributes,0,edgeAttributes,0, edgeAttributes.length);}
-        
-               
-    
+            System.arraycopy(tempEdgeAttributes, 0, edgeAttributes, 0, edgeAttributes.length);
+        }
+
+
+
     }
 
     public static void selectTimeField() {
-        timeField = (String)Screen2.listFields.getSelectedValue();
+        timeField = (String) Screen2.listFields.getSelectedValue();
         System.out.println("time field is: " + timeField);
 
         Screen2.model.removeElement(timeField);
-        GUIMain.screen2.setVisible(false);
+        Main.screen2.setVisible(false);
         GUIMain.screen4.setVisible(true);
-        
+
         Screen2.OKButton.setText("<html><b>create gexf</b></html>");
-        Screen2.count = 6;
+        Screen2.count = 8;
 
     }
-    
-    
-    
+
     //reads lines of the csv file and instanciates as many objects from the Transaction class
     public static void populateTransactions() throws IOException {
         Clock readTransactions = new Clock("reading each line of the csv file");
+
+        int indexStartYear = userDefinedTimeFormat.indexOf("y");
+        System.out.println("indexStartYear is: " + indexStartYear);
+
+        int indexStartMonth = userDefinedTimeFormat.indexOf("m");
+        System.out.println("indexStartMonth is: " + indexStartMonth);
+        
+        int indexStartDay = userDefinedTimeFormat.indexOf("d");
+        System.out.println("indexStartDay is: " + indexStartDay);
+
+        int indexStartHour = userDefinedTimeFormat.indexOf("h");
+        System.out.println("indexStartHour is: " + indexStartHour);
+
+        int indexStartMinute = userDefinedTimeFormat.indexOf("i");
+        System.out.println("indexStartMinute is: " + indexStartMinute);
+        
+        int indexStartSecond = userDefinedTimeFormat.indexOf("s");
+        System.out.println("indexStartSecond is: " + indexStartSecond);
+
+        userDefinedTimeFormat = userDefinedTimeFormat.replace("yyyy", "(\\d*)");
+        userDefinedTimeFormat = userDefinedTimeFormat.replace("#", ".");
+        userDefinedTimeFormat = userDefinedTimeFormat.replace("mm", "(\\d*)");
+        userDefinedTimeFormat = userDefinedTimeFormat.replace("dd", "(\\d*)");
+        userDefinedTimeFormat = userDefinedTimeFormat.replace("hh", "(\\d*)");
+        userDefinedTimeFormat = userDefinedTimeFormat.replace("ii", "(\\d*)");
+        userDefinedTimeFormat = userDefinedTimeFormat.replace("ss", "(\\d*)");
+        System.out.println("regex pattern is: " + userDefinedTimeFormat);
+
+
+        if (indexStartYear!=-1)
+        mapPOSinTimePattern.put(indexStartYear, "year");
+        if (indexStartMonth!=-1)
+        mapPOSinTimePattern.put(indexStartMonth, "month");
+        if (indexStartDay!=-1)
+        mapPOSinTimePattern.put(indexStartDay, "day");
+        if (indexStartHour!=-1)
+        mapPOSinTimePattern.put(indexStartHour, "hour");
+        if (indexStartMinute!=-1)        
+        mapPOSinTimePattern.put(indexStartMinute, "minute");
+        if (indexStartSecond!=-1)
+        mapPOSinTimePattern.put(indexStartSecond, "second");
+
+        Iterator<Integer> itTimeFields = mapPOSinTimePattern.keySet().iterator();
+        int j = 0;
+        orderOfTimeFieldsInUserPattern = new String[mapPOSinTimePattern.keySet().size()];
+        
+        while (itTimeFields.hasNext()) {
+            int currRank = itTimeFields.next();
+            
+           orderOfTimeFieldsInUserPattern[j] = mapPOSinTimePattern.get(currRank);
+            System.out.println("group number for " + orderOfTimeFieldsInUserPattern[j] + " is " + (j + 1));
+            j++;
+        }
+
+        for (int i = 0;i<orderOfTimeFieldsInUserPattern.length;i++){
+            mapOrderTimeFields.put(orderOfTimeFieldsInUserPattern[i],i+1);
+            
+        }
+
+
 
         while (transactionsCsv.readRecord()) {
             new Transaction(transactionsCsv.getValues());
@@ -204,16 +265,18 @@ public class Main implements Runnable {
 
         Clock headerWriting = new Clock("writing the header of the gexf file");
 
-        
+
         //this creates an array of node attributes made of the attributes of source nodes AND attributes of the target nodes
-        nodeAttributes = new String [sourceAttributes.length+targetAttributes.length];
-        
-        for (int i = 0;i< sourceAttributes.length;i++)
-            nodeAttributes[i]=sourceAttributes[i];
-        for (int i = 0;i< targetAttributes.length;i++)
-            nodeAttributes[i+sourceAttributes.length]=targetAttributes[i];
-                    
-        
+        nodeAttributes = new String[sourceAttributes.length + targetAttributes.length];
+
+        for (int i = 0; i < sourceAttributes.length; i++) {
+            nodeAttributes[i] = sourceAttributes[i];
+        }
+        for (int i = 0; i < targetAttributes.length; i++) {
+            nodeAttributes[i + sourceAttributes.length] = targetAttributes[i];
+        }
+
+
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         BufferedWriter bw = new BufferedWriter(new FileWriter(javaGEXFoutput));
@@ -231,7 +294,7 @@ public class Main implements Runnable {
         bw.newLine();
         bw.write("    <attributes class=\"node\" mode=\"dynamic\">");
         bw.newLine();
-        
+
         for (int i = 0; i < nodeAttributes.length; i++) {
             bw.write("      <attribute id=\"" + nodeAttributes[i] + "\" title=\"" + nodeAttributes[i] + "\" type=\"string\"></attribute>");
             bw.newLine();
@@ -240,16 +303,17 @@ public class Main implements Runnable {
         bw.newLine();
         bw.write("    <attributes class=\"edge\" mode=\"dynamic\">");
         bw.newLine();
-        
-        for (int i = 0; i < edgeAttributes.length-1; i++) {
-            
+
+        for (int i = 0; i < edgeAttributes.length - 1; i++) {
+
             bw.write("      <attribute id=\"" + edgeAttributes[i] + "\" title=\"" + edgeAttributes[i] + "\" type=\"string\"></attribute>");
             bw.newLine();
         }
 
-        if (edgeWeight!=null){
+        if (edgeWeight != null) {
             bw.write("      <attribute id=\"weight\" title=\"Weight\" type=\"float\"></attribute>");
-            bw.newLine();}
+            bw.newLine();
+        }
         bw.write("    </attributes>");
         bw.newLine();
         bw.write("<nodes>");

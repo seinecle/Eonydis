@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 public class GUIMain {
 
     public static Screen1 screen1;
-    public static Screen2 screen2;
     public static Screen3 screen3;
     public static Screen4 screen4;
 
@@ -58,14 +57,12 @@ public class GUIMain {
                 try {
 
                     screen1 = new Screen1();
-                    screen2 = new Screen2();
                     screen3 = new Screen3();
                     screen4 = new Screen4();
                 } catch (IOException ex) {
                     Logger.getLogger(GUIMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 screen1.setVisible(true);
-                screen2.setVisible(false);
                 screen3.setVisible(false);
                 screen4.setVisible(false);
 

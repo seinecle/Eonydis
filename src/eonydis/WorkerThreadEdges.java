@@ -81,9 +81,11 @@ public class WorkerThreadEdges implements Runnable {
                 for (int i = 0; i < Main.edgeAttributes.length; i++) {
 
                     //This try-catch treats null values for attributes as zeros.
-                    try{
+                    try {
                         currValue = Float.parseFloat(currTrans.getLeft().get(Main.edgeAttributes[i]));
-                    }catch (NumberFormatException e){currValue = (float) 0;}
+                    } catch (NumberFormatException e) {
+                        currValue = (float) 0;
+                    }
 
 
                     //if the list of (dates, value) already contains the date of the current transaction
@@ -92,11 +94,12 @@ public class WorkerThreadEdges implements Runnable {
                         //retrieve the current value stored for the date
                         Float[] storedValue = setMultiValues.get(currTrans.getRight());
 
-                        
+
                         //These two lines treat null values for attributes as zeros.
-                        if (storedValue[i] == null)
-                            storedValue[i] = (float)(0);         
-                        
+                        if (storedValue[i] == null) {
+                            storedValue[i] = (float) (0);
+                        }
+
                         //add the currValue to the storedValue
                         storedValue[i] = storedValue[i] + currValue;
 
@@ -117,7 +120,7 @@ public class WorkerThreadEdges implements Runnable {
 
 
                 }
-                
+
                 //add the date to an ordered multiset. The edge creation will be based on an iteration of this (chronologically) ordered set
                 setMultiDates.add(currTrans.getRight());
 
@@ -167,18 +170,21 @@ public class WorkerThreadEdges implements Runnable {
 
             Spell currSpell = listSpellsIt.next();
             for (int i = 0; i < currSpell.values.length; i++) {
-                if (Main.edgeWeight.equals(Main.edgeAttributes[i])){
-                    
-                oneEdgeAttValues.append("<attvalue for=\"weight\" value=\"").append(currSpell.values[i]).append("\" start=\"");
-                    
-                }
-                else{oneEdgeAttValues.append("<attvalue for=\"").append(Main.edgeAttributes[i]).append("\" value=\"").append(currSpell.values[i]).append("\" start=\"");}
+                if (Main.edgeWeight != null) {
+                    if (Main.edgeWeight.equals(Main.edgeAttributes[i])) {
 
-            oneEdgeAttValues.append(currSpell.date).append("\" ");
-            oneEdgeAttValues.append("end=\"");
-            oneEdgeAttValues.append(currSpell.date).append("\" ");
-            oneEdgeAttValues.append("/>");
-            oneEdgeAttValues.append("\n");
+                        oneEdgeAttValues.append("<attvalue for=\"weight\" value=\"").append(currSpell.values[i]).append("\" start=\"");
+
+                    }
+                } else {
+                    oneEdgeAttValues.append("<attvalue for=\"").append(Main.edgeAttributes[i]).append("\" value=\"").append(currSpell.values[i]).append("\" start=\"");
+                }
+
+                oneEdgeAttValues.append(currSpell.date).append("\" ");
+                oneEdgeAttValues.append("end=\"");
+                oneEdgeAttValues.append(currSpell.date).append("\" ");
+                oneEdgeAttValues.append("/>");
+                oneEdgeAttValues.append("\n");
             }
 
         }
@@ -253,7 +259,7 @@ public class WorkerThreadEdges implements Runnable {
 
 
         oneEdgeFull.append("<edge id=\"").append(edgeCounter).append("\" source=\"").append(refNodesPair.getLeft()).append("\" target=\"").append(refNodesPair.getRight()).append("\">\n");
-        
+
         //this condition deals with the case when no edge attributes were selected by the user
         if (Main.edgeAttributes.length != 0) {
             oneEdgeFull.append(oneEdgeAttValues);

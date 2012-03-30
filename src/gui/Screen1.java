@@ -176,7 +176,6 @@ public class Screen1 extends javax.swing.JFrame {
 
 
             if (fileSelected) {
-
                 //System.out.println(String.valueOf(countHTML));
                 String[] args;
                 args = new String[3];

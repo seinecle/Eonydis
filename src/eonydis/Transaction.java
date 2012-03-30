@@ -54,9 +54,15 @@ public class Transaction {
             // parse the field "ln_date" to format the time in a proper way
             arrayTime = mapTransFull.get("ln_time").split("/");
             month = Integer.valueOf(arrayTime[0]);
+            System.out.println("value of Month with the usual method: "+month);
             day = Integer.valueOf(arrayTime[1]);
             year = Integer.valueOf(arrayTime[2].split(" ")[0]);
 
+            String timeField = mapTransFull.get("ln_time");
+            month = Integer.valueOf(timeField.replaceAll(Main.userDefinedTimeFormat, "$"+Main.mapOrderTimeFields.get("month")));
+            System.out.println("value of Month with the user defined method: "+month);
+            
+            
             //stores the time in a dt object (using the Joda library)
             dt = new LocalDate(year,month,day);
             //creates an object "nodeSource" to store in a neat way the details of the lending bank of this transaction (see "Node" class to see the details)

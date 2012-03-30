@@ -4,6 +4,11 @@
  */
 package gui;
 
+import eonydis.Main;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author C. Levallois
@@ -26,10 +31,14 @@ public class Screen4 extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        userIndicatedTimeFormatField = new javax.swing.JTextField();
+        OKButton = new javax.swing.JButton();
+
+        jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -38,12 +47,19 @@ public class Screen4 extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Script MT Bold", 0, 36)); // NOI18N
         jLabel1.setText("Eonydes");
 
-        jLabel2.setText("<html>Indicate how the data and time is formatted in the relevant field:<br>-use the symbols yyyy,mm and dd to indicate years, months and days.<br>-use hh,ii and ss to indicate hours, minutes and seconds.<br><br>Example:<br>For a date appearing as 01/12/1987;15:12:58, write:<br>dd#mm#yyyy#hh#ii#ss");
+        jLabel2.setText("<html>Indicate how the data and time is formatted in the relevant field:<br>-use the symbols yyyy,mm and dd to indicate years, months and days.<br>-use hh,ii and ss to indicate hours, minutes and seconds.<br><br>Example:<br>For a date appearing as 31/12/1987;15:12:58, write:<br>dd#mm#yyyy#hh#ii#ss");
 
-        jTextField1.setText("dd#mm#yyyy#");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        userIndicatedTimeFormatField.setText("mm#dd#yyyy#hh#ii");
+        userIndicatedTimeFormatField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                userIndicatedTimeFormatFieldActionPerformed(evt);
+            }
+        });
+
+        OKButton.setText("OK");
+        OKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OKButtonActionPerformed(evt);
             }
         });
 
@@ -56,7 +72,8 @@ public class Screen4 extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(userIndicatedTimeFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(OKButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -67,8 +84,10 @@ public class Screen4 extends javax.swing.JFrame {
                 .addGap(42, 42, 42)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(238, Short.MAX_VALUE))
+                .addComponent(userIndicatedTimeFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 186, Short.MAX_VALUE)
+                .addComponent(OKButton)
+                .addGap(27, 27, 27))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -87,9 +106,26 @@ public class Screen4 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void userIndicatedTimeFormatFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userIndicatedTimeFormatFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_userIndicatedTimeFormatFieldActionPerformed
+
+    private void OKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OKButtonActionPerformed
+        try {
+            GUIMain.screen4.setVisible(false);
+            Main.screen2.setVisible(true);
+            
+            Main.userDefinedTimeFormat = userIndicatedTimeFormatField.getText();
+            Main.populateTransactions();
+            Main.createGexfIntro();
+            Main.createGexfNodes();
+            Main.createGexfEdges();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Screen4.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Screen4.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_OKButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -129,13 +165,16 @@ public class Screen4 extends javax.swing.JFrame {
 
             public void run() {
                 new Screen4().setVisible(true);
+
             }
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton OKButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField userIndicatedTimeFormatField;
     // End of variables declaration//GEN-END:variables
 }
