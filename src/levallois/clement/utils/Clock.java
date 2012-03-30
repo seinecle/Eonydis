@@ -5,7 +5,6 @@
 package levallois.clement.utils;
 
 //import GUI.GUI_Screen_1;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -49,10 +48,10 @@ public class Clock {
        
         if (elapsedTime
                 < 1000) {
-            System.out.println("still " + StringUtils.lowerCase(action) + ", " + elapsedTime + " milliseconds]");
+            System.out.println("still " + action.toLowerCase() + ", " + elapsedTime + " milliseconds]");
             
         } else {
-            System.out.println("still " + StringUtils.lowerCase(action) + ", " + elapsedTime / 1000 + " seconds]");
+            System.out.println("still " + action.toLowerCase() + ", " + elapsedTime / 1000 + " seconds]");
         }
         
     }

@@ -17,6 +17,8 @@ public class GUIMain {
     public static Screen1 screen1;
     public static Screen3 screen3;
     public static Screen4 screen4;
+    public static Screen5 screen5;
+    public static Screen6 screen6;
 
 
     public static void main(String args[]) {
@@ -59,12 +61,16 @@ public class GUIMain {
                     screen1 = new Screen1();
                     screen3 = new Screen3();
                     screen4 = new Screen4();
+                    screen5 = new Screen5();
+                    screen6 = new Screen6();
                 } catch (IOException ex) {
                     Logger.getLogger(GUIMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 screen1.setVisible(true);
                 screen3.setVisible(false);
                 screen4.setVisible(false);
+                screen5.setVisible(false);
+                screen6.setVisible(false);
 
             }
         });

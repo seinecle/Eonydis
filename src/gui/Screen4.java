@@ -37,6 +37,7 @@ public class Screen4 extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         userIndicatedTimeFormatField = new javax.swing.JTextField();
         OKButton = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
 
         jButton1.setText("jButton1");
 
@@ -45,7 +46,7 @@ public class Screen4 extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Script MT Bold", 0, 36)); // NOI18N
-        jLabel1.setText("Eonydes");
+        jLabel1.setText("Eonydis");
 
         jLabel2.setText("<html>Indicate how the data and time is formatted in the relevant field:<br>-use the symbols yyyy,mm and dd to indicate years, months and days.<br>-use hh,ii and ss to indicate hours, minutes and seconds.<br><br>Example:<br>For a date appearing as 31/12/1987;15:12:58, write:<br>dd#mm#yyyy#hh#ii#ss");
 
@@ -63,6 +64,9 @@ public class Screen4 extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 13)); // NOI18N
+        jLabel3.setText("create evolving networks");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -73,7 +77,8 @@ public class Screen4 extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(userIndicatedTimeFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(OKButton))
+                    .addComponent(OKButton)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -81,7 +86,9 @@ public class Screen4 extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(42, 42, 42)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addGap(19, 19, 19)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(userIndicatedTimeFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -113,13 +120,17 @@ public class Screen4 extends javax.swing.JFrame {
     private void OKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OKButtonActionPerformed
         try {
             GUIMain.screen4.setVisible(false);
-            Main.screen2.setVisible(true);
+            GUIMain.screen6.exitButton.setVisible(false);
+            GUIMain.screen6.setVisible(true);
             
             Main.userDefinedTimeFormat = userIndicatedTimeFormatField.getText();
             Main.populateTransactions();
             Main.createGexfIntro();
             Main.createGexfNodes();
             Main.createGexfEdges();
+            GUIMain.screen6.jLabel3.setText("<html>process completed!<br>Check the folder of your initial csv file<br>to find the gexf file<br> This file is ready to be imported in Gephi</html>");
+            GUIMain.screen6.exitButton.setVisible(true);
+
         } catch (InterruptedException ex) {
             Logger.getLogger(Screen4.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -174,6 +185,7 @@ public class Screen4 extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField userIndicatedTimeFormatField;
     // End of variables declaration//GEN-END:variables

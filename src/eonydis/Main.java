@@ -7,7 +7,9 @@ package eonydis;
 import com.csvreader.CsvReader;
 import gui.GUIMain;
 import gui.Screen2;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -154,10 +156,10 @@ public class Main implements Runnable {
         for (int i = 0; i < edgeAttributes.length; i++) {
             System.out.println("selected edge attribute(s): " + edgeAttributes[i]);
             Screen2.model.removeElement(edgeAttributes[i]);
-            Screen2.toBeSelected.setText("<html>select time field</html>");
-            Screen2.count = 7;
 
         }
+        Screen2.toBeSelected.setText("<html>select time field</html>");
+        Screen2.count = 7;
 
 
         //this appendix to SelectEdgeAttributes adds the edge attribute selected for weight - if any
@@ -353,6 +355,7 @@ public class Main implements Runnable {
 
     public static void createGexfEdges() throws IOException {
 
+        Clock writeGexfEdges = new Clock("writing the edges into the gexf file");
         BufferedWriter bw;
         bw = new BufferedWriter(new FileWriter(javaGEXFoutput, true));
         bw.newLine();
@@ -401,7 +404,7 @@ public class Main implements Runnable {
         bw.write(edges.toString());
         //System.out.println(nodeCounter);
         bw.close();
-
+        writeGexfEdges.closeAndPrintClock();
 
     } // end method createGexfNodes()
 
