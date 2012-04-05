@@ -69,7 +69,7 @@ public class Screen4 extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 2, 13)); // NOI18N
         jLabel3.setText("create evolving networks");
 
-        jTextPane1.setText("note: be careful as any mistake will prevent the program from decoding your time field! In particular, don't forget that spaces also should be indicated with a #.Example: 12 / 1978 should be mm###yyyy because there are two spaces around the /");
+        jTextPane1.setText("note: be careful as any mistake will prevent the program from decoding your time field! In particular, don't forget that spaces also should be indicated with a #. Example: 12 / 1978 should be mm###yyyy because there are two spaces around the /");
         jScrollPane1.setViewportView(jTextPane1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

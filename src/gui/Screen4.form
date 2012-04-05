@@ -135,7 +135,7 @@
           <SubComponents>
             <Component class="javax.swing.JTextPane" name="jTextPane1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="note: be careful as any mistake will prevent the program from decoding your time field! In particular, don&apos;t forget that spaces also should be indicated with a #.Example: 12 / 1978 should be mm###yyyy because there are two spaces around the /"/>
+                <Property name="text" type="java.lang.String" value="note: be careful as any mistake will prevent the program from decoding your time field! In particular, don&apos;t forget that spaces also should be indicated with a #. Example: 12 / 1978 should be mm###yyyy because there are two spaces around the /"/>
               </Properties>
             </Component>
           </SubComponents>

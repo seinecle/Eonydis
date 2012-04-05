@@ -70,7 +70,7 @@ public class WorkerThreadEdges implements Runnable {
 
 
         // loop through all transactions, starting at the current one (see comment above)
-        // this iteration produces a map of dates + sum of the corresponding values
+        // this iteration produces a map of dates + (sum or average) of the corresponding values
 
         while (it.hasNext()) {
 
@@ -82,7 +82,11 @@ public class WorkerThreadEdges implements Runnable {
 
                 //beginning of the loop through edge attributes
                 for (int i = 0; i < Main.edgeAttributes.length; i++) {
+                    
+                 // this is where a bifurcation should be made for String attributes
+                 //ideally I'd use generics but I've no time for that...   
 
+                    
                     //This try-catch treats null values for attributes as zeros.
                     try {
                         currValue = Float.parseFloat(currTrans.getLeft().get(Main.edgeAttributes[i]));
@@ -141,8 +145,11 @@ public class WorkerThreadEdges implements Runnable {
             // the associated value
             for (int j = 0; j < Main.edgeAttributes.length; j++) {
 
-                setMultiValues.get(spellDate)[j] = setMultiValues.get(spellDate)[j] / setMultiDates.count(spellDate);
-
+                if (Main.doAverage) {
+                    setMultiValues.get(spellDate)[j] = setMultiValues.get(spellDate)[j] / setMultiDates.count(spellDate);
+                } else {
+                    setMultiValues.get(spellDate)[j] = setMultiValues.get(spellDate)[j];
+                }
             }
 
             //deals with the case when no edge attributes were selected by the user
@@ -242,7 +249,7 @@ public class WorkerThreadEdges implements Runnable {
             }
 
         }
-        //!!!! iterates through all the dates for this node and creates corresponding spells
+        //!!!! iterates through all the dates for this edge and creates corresponding spells
         Iterator<PairDates> iteratorStartEndDates = setStartEndDates.iterator();
         while (iteratorStartEndDates.hasNext()) {
             PairDates<LocalDate, LocalDate> currPair = iteratorStartEndDates.next();

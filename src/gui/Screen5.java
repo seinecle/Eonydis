@@ -40,9 +40,10 @@ public class Screen5 extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Script MT Bold", 0, 48)); // NOI18N
         jLabel1.setText("Eonydis");
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 13)); // NOI18N
         jLabel2.setText("create evolving networks");
 
-        jLabel3.setText("<html>a software by Clement Levallois (www.clementlevallois.net).<br><br>Libraries used:<br>- Joda (http://joda-time.sourceforge.net/)<br>- Guava (http://code.google.com/p/guava-libraries/)<br>- CSV Reader (http://www.csvreader.com/java_csv.php</html>");
+        jLabel3.setText("<html>a software by Clement Levallois (www.clementlevallois.net)<br><br>Libraries used:<br>- Joda (http://joda-time.sourceforge.net/)<br>- Guava (http://code.google.com/p/guava-libraries/)<br>- CSV Reader (http://www.csvreader.com/java_csv.php</html>");
 
         jLabel4.setText("The support from De Nerdelandse Bank is gratefully acknowledged");
 

@@ -22,7 +22,6 @@ public class WorkerThreadNodes implements Runnable {
     private boolean newSpell2;
     private float currValue;
     private Float[] emptyValues = new Float[0];
-    private boolean isSource;
     private String [] nodeAttributes;
 
     WorkerThreadNodes(String nodeId) {

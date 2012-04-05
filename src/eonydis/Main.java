@@ -64,11 +64,13 @@ public class Main implements Runnable {
     public static HashMap<String, Integer> mapOrderTimeFields = new HashMap();
     public static String[] orderOfTimeFieldsInUserPattern;
     static int countNodesLoops = 0;
+    public static boolean doAverage;
 
-    public Main(String wk, String file) {
+    public Main(String wk, String file,String doAverage) {
 
         pathFile = wk + "\\";
         nameFile = file;
+        this.doAverage = Boolean.getBoolean(doAverage);
 
     }
 
