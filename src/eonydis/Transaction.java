@@ -58,7 +58,8 @@ public class Transaction {
 //            day = Integer.valueOf(arrayTime[1]);
 //            year = Integer.valueOf(arrayTime[2].split(" ")[0]);
 
-            String timeField = mapTransFull.get("ln_time");
+            String timeField = mapTransFull.get(Main.timeField);
+            System.out.println("time field is: "+timeField);
             month = Integer.valueOf(timeField.replaceAll(Main.userDefinedTimeFormat, "$"+Main.mapOrderTimeFields.get("month")));
             day = Integer.valueOf(timeField.replaceAll(Main.userDefinedTimeFormat, "$"+Main.mapOrderTimeFields.get("day")));
             year = Integer.valueOf(timeField.replaceAll(Main.userDefinedTimeFormat, "$"+Main.mapOrderTimeFields.get("year")));
@@ -68,10 +69,10 @@ public class Transaction {
             //stores the time in a dt object (using the Joda library)
             dt = new LocalDate(year,month,day);
             //creates an object "nodeSource" to store in a neat way the details of the lending bank of this transaction (see "Node" class to see the details)
-            Node nodeSource = new Node(mapTransFull.get(Main.target));
+            Node nodeSource = new Node(mapTransFull.get(Main.source));
             
             //creates an object "nodeTarget" to store in a neat way the details of the borrowing bank of this transaction (see "Node" class to see the details)
-            Node nodeTarget = new Node(mapTransFull.get(Main.source));
+            Node nodeTarget = new Node(mapTransFull.get(Main.target));
 
             Main.listTransactionsAndDates.add(new Triple(mapTransFull,new Pair(nodeSource.getNodeId(),nodeTarget.getNodeId()),dt));           
             

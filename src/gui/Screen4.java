@@ -50,7 +50,7 @@ public class Screen4 extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Script MT Bold", 0, 36)); // NOI18N
         jLabel1.setText("Eonydis");
 
-        jLabel2.setText("<html>Indicate the formar of your time field:<br>-use the symbols yyyy,mm and dd to indicate years, months and days.<br>-use hh,ii and ss to indicate hours, minutes and seconds.<br><br>Example:<br>For a date appearing as 31/12/1987;15:12:58, write:<br>dd#mm#yyyy#hh#ii#ss");
+        jLabel2.setText("<html>Indicate the format of your time field:<br>-use the symbols yyyy,mm and dd to indicate years, months and days.<br>-use hh,ii and ss to indicate hours, minutes and seconds.<br><br>Example:<br>For a date appearing as 31/12/1987;15:12:58, write:<br>dd#mm#yyyy#hh#ii#ss");
 
         userIndicatedTimeFormatField.setText("mm#dd#yyyy#hh#ii");
         userIndicatedTimeFormatField.addActionListener(new java.awt.event.ActionListener() {

@@ -1,8 +1,8 @@
 <launch4jConfig>
-  <dontWrapJar>false</dontWrapJar>
+  <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\C. Levallois\Documents\NetBeansProjects\Java files\Eonydis\dist\Eonydis.jar</jar>
-  <outfile>C:\Users\C. Levallois\Documents\NetBeansProjects\Java files\Eonydis\dist\eonydis.exe</outfile>
+  <jar>Eonydis.jar</jar>
+  <outfile>D:\Docs Pro Clement\NetBeansProjects\Eonydis\dist\eonydis.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>

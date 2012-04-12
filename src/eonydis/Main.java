@@ -45,7 +45,7 @@ public class Main implements Runnable {
     public static ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
     public static StringBuilder nodes = new StringBuilder();
     public static StringBuilder edges = new StringBuilder();
-    public static String javaGEXFoutput = "C:\\data\\java_generated.gexf";
+    public static String javaGEXFoutput = GUIMain.screen1.workingDirectory+"\\java_generated.gexf";
     public static String[] arrayValues;
     public static Screen2 screen2;
     public static String[] nodeAttributes;

@@ -102,7 +102,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;a software by Clement Levallois (www.clementlevallois.net)&lt;br&gt;&lt;br&gt;Libraries used:&lt;br&gt;- Joda (http://joda-time.sourceforge.net/)&lt;br&gt;- Guava (http://code.google.com/p/guava-libraries/)&lt;br&gt;- CSV Reader (http://www.csvreader.com/java_csv.php&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;a software by Clement Levallois (www.clementlevallois.net)&lt;br&gt;&lt;br&gt;Libraries used:&lt;br&gt;- Joda (http://joda-time.sourceforge.net/)&lt;br&gt;- Guava (http://code.google.com/p/guava-libraries/)&lt;br&gt;- CSV Reader (http://www.csvreader.com/java_csv.php)&lt;/html&gt;"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
