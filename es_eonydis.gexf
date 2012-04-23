@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gexf xmlns="http://www.gexf.net/1.2draft" version="1.2" xmlns:viz="http://www.gexf.net/1.2draft/viz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd">
+    <meta lastmodifieddate="2012/04/23 09:34:58">
+<creator>gexf file generated with Eonydis - see www.clementlevallois.net</creator>
+    </meta>
+    <graph defaultedgetype="directed" timeformat="date" mode="dynamic">
+    <attributes class="node" mode="dynamic">
+    </attributes>
+    <attributes class="edge" mode="dynamic">
+    </attributes>
+<nodes>
+<node id="Gerald" label="Gerald">
+    <attvalues>
+    </attvalues>
+    <spells>
+        <spell start="2012-01-01" end="2012-01-01" />
+    </spells>
+</node>
+<node id="Ted" label="Ted">
+    <attvalues>
+    </attvalues>
+    <spells>
+        <spell start="2011-07-07" end="2011-07-07" />
+    </spells>
+</node>
+<node id="Jan" label="Jan">
+    <attvalues>
+    </attvalues>
+    <spells>
+        <spell start="2011-07-07" end="2011-07-07" />
+        <spell start="2012-03-29" end="2012-03-29" />
+    </spells>
+</node>
+<node id="Denis" label="Denis">
+    <attvalues>
+    </attvalues>
+    <spells>
+        <spell start="2012-01-01" end="2012-01-01" />
+    </spells>
+</node>
+<node id="Marc" label="Marc">
+    <attvalues>
+    </attvalues>
+    <spells>
+        <spell start="2012-01-01" end="2012-01-01" />
+    </spells>
+</node>
+<node id="Eloise" label="Eloise">
+    <attvalues>
+    </attvalues>
+    <spells>
+        <spell start="2012-03-29" end="2012-03-29" />
+    </spells>
+</node>
+</nodes>
+<edges>
+<edge id="1" source="Marc" target="Gerald">
+    <spells>
+        <spell start="2012-01-01" end="2012-01-01" />
+    </spells>
+</edge>
+<edge id="2" source="Marc" target="Denis">
+    <spells>
+        <spell start="2012-01-01" end="2012-01-01" />
+    </spells>
+</edge>
+<edge id="3" source="Ted" target="Jan">
+    <spells>
+        <spell start="2011-07-07" end="2011-07-07" />
+    </spells>
+</edge>
+<edge id="4" source="Jan" target="Eloise">
+    <spells>
+        <spell start="2012-03-29" end="2012-03-29" />
+    </spells>
+</edge>
+</edges>
+</graph>
+</gexf>

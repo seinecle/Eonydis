@@ -137,7 +137,7 @@ public class Screen4 extends javax.swing.JFrame {
             Main.createGexfIntro();
             Main.createGexfNodes();
             Main.createGexfEdges();
-            GUIMain.screen6.jLabel3.setText(GUIMain.screen6.jLabel3.getText().concat("process completed!\nCheck the folder of your initial csv file to find the gexf file. This file is ready to be imported in Gephi"));
+            GUIMain.screen6.jLabel3.setText(GUIMain.screen6.jLabel3.getText().concat("process completed!\nCheck the folder of your initial csv file to find the gexf file.\nThis file is ready to be imported in Gephi.\n"));
             GUIMain.screen6.exitButton.setVisible(true);
 
         } catch (InterruptedException ex) {

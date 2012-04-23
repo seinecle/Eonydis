@@ -45,14 +45,18 @@ public class Main implements Runnable {
     public static ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
     public static StringBuilder nodes = new StringBuilder();
     public static StringBuilder edges = new StringBuilder();
-    public static String javaGEXFoutput = GUIMain.screen1.workingDirectory+"\\java_generated.gexf";
+    public static String fileName = GUIMain.screen1.fileSelectedName.substring(0, GUIMain.screen1.fileSelectedName.lastIndexOf("."));
+    public static String javaGEXFoutput;
     public static String[] arrayValues;
     public static Screen2 screen2;
     public static String[] nodeAttributes;
     public static String[] edgeAttributes;
+    public static Object[] edgeAttributesObjects;
     public static String edgeWeight;
     public static String[] sourceAttributes;
+    public static Object[] sourceAttributesObjects;
     public static String[] targetAttributes;
+    public static Object[] targetAttributesObjects;
     public static String userDefinedTimeFormat;
     public static String timeField;
     String pathFile;
@@ -65,8 +69,9 @@ public class Main implements Runnable {
     public static String[] orderOfTimeFieldsInUserPattern;
     static int countNodesLoops = 0;
     public static boolean doAverage;
+    public static int lengthEdgeAttributesArray;
 
-    public Main(String wk, String file,String doAverage) {
+    public Main(String wk, String file, String doAverage) {
 
         pathFile = wk + "\\";
         nameFile = file;
@@ -80,6 +85,8 @@ public class Main implements Runnable {
 
 
 
+            javaGEXFoutput = pathFile + fileName + "_eonydis.gexf";
+            System.out.println("file name is: " + javaGEXFoutput);
 
             transactionsCsv = new CsvReader(pathFile + nameFile);
             readHeaders = transactionsCsv.readHeaders();
@@ -111,33 +118,35 @@ public class Main implements Runnable {
         target = (String) Screen2.listFields.getSelectedValue();
         System.out.println("target is: " + target);
         Screen2.model.removeElement(target);
-        Screen2.toBeSelected.setText("<html>select attribute(s) for <b>source nodes</b></html>");
+        Screen2.toBeSelected.setText("<html>select attribute(s) for <b>source nodes</b><br>(use shift and ctrl to select multiple attributes)<br>(no attributes? just click next)</html>");
         Screen2.count = 3;
     }
 
     public static void selectSourceAttributes() {
-        List<String> listNodeAttributesSelected = Screen2.listFields.getSelectedValuesList();
-        sourceAttributes = listNodeAttributesSelected.toArray(new String[Screen2.listFields.getSelectedValuesList().size()]);
+        sourceAttributesObjects = Screen2.listFields.getSelectedValues();
+        sourceAttributes = new String[sourceAttributesObjects.length];
 
-        for (int i = 0; i < sourceAttributes.length; i++) {
-            System.out.println("selected source attribute(s): " + sourceAttributes[i]);
-            Screen2.model.removeElement(sourceAttributes[i]);
+        for (int i = 0; i < sourceAttributesObjects.length; i++) {
+            System.out.println("selected source attribute(s): " + sourceAttributesObjects[i].toString());
+            Screen2.model.removeElement(sourceAttributesObjects[i]);
+            sourceAttributes[i] = sourceAttributesObjects[i].toString();
         }
 
-        Screen2.toBeSelected.setText("<html>select attribute(s) for <b>target nodes</b></html>");
+        Screen2.toBeSelected.setText("<html>select attribute(s) for <b>target nodes</b><br>(use shift and ctrl to select multiple attributes)<br>(no attributes? just click next)</html>");
         Screen2.count = 4;
     }
 
     public static void selectTargetAttributes() {
-        List<String> listNodeAttributesSelected = Screen2.listFields.getSelectedValuesList();
-        targetAttributes = listNodeAttributesSelected.toArray(new String[Screen2.listFields.getSelectedValuesList().size()]);
+        targetAttributesObjects = Screen2.listFields.getSelectedValues();
+        targetAttributes = new String[targetAttributesObjects.length];
 
-        for (int i = 0; i < targetAttributes.length; i++) {
-            System.out.println("selected target attribute(s): " + targetAttributes[i]);
-            Screen2.model.removeElement(targetAttributes[i]);
+        for (int i = 0; i < targetAttributesObjects.length; i++) {
+            System.out.println("selected target attribute(s): " + targetAttributesObjects[i].toString());
+            Screen2.model.removeElement(targetAttributesObjects[i]);
+            targetAttributes[i] = targetAttributesObjects[i].toString();
         }
 
-        Screen2.toBeSelected.setText("<html>select attribute for <b>edge weight</b></html>");
+        Screen2.toBeSelected.setText("<html>select one attribute for <b>edge weight</b><br>(no attribute for weight? just click next)</html>");
         Screen2.count = 5;
     }
 
@@ -147,18 +156,19 @@ public class Main implements Runnable {
 
         Screen2.model.removeElement(edgeWeight);
 
-        Screen2.toBeSelected.setText("<html>select other <b>edge attribute(s)</b></html>");
+        Screen2.toBeSelected.setText("<html>select other <b>edge attribute(s)</b><br>(use shift and ctrl to select multiple attributes)<br>(no attributes? just click next)</html>");
         Screen2.count = 6;
 
     }
 
     public static void selectEdgeAttributes() {
-        List<String> listedgeAttributesSelected = Screen2.listFields.getSelectedValuesList();
-        edgeAttributes = listedgeAttributesSelected.toArray(new String[Screen2.listFields.getSelectedValuesList().size()]);
+        edgeAttributesObjects = Screen2.listFields.getSelectedValues();
+        edgeAttributes = new String[edgeAttributesObjects.length];
 
-        for (int i = 0; i < edgeAttributes.length; i++) {
-            System.out.println("selected edge attribute(s): " + edgeAttributes[i]);
-            Screen2.model.removeElement(edgeAttributes[i]);
+        for (int i = 0; i < edgeAttributesObjects.length; i++) {
+            System.out.println("selected edge attribute(s): " + edgeAttributesObjects[i].toString());
+            Screen2.model.removeElement(edgeAttributesObjects[i]);
+            edgeAttributes[i] = edgeAttributesObjects[i].toString();
 
         }
         Screen2.toBeSelected.setText("<html>select <b>time field<b></html>");
@@ -201,7 +211,7 @@ public class Main implements Runnable {
 
         int indexStartMonth = userDefinedTimeFormat.indexOf("m");
         System.out.println("indexStartMonth is: " + indexStartMonth);
-        
+
         int indexStartDay = userDefinedTimeFormat.indexOf("d");
         System.out.println("indexStartDay is: " + indexStartDay);
 
@@ -210,7 +220,7 @@ public class Main implements Runnable {
 
         int indexStartMinute = userDefinedTimeFormat.indexOf("i");
         System.out.println("indexStartMinute is: " + indexStartMinute);
-        
+
         int indexStartSecond = userDefinedTimeFormat.indexOf("s");
         System.out.println("indexStartSecond is: " + indexStartSecond);
 
@@ -224,34 +234,40 @@ public class Main implements Runnable {
         System.out.println("regex pattern is: " + userDefinedTimeFormat);
 
 
-        if (indexStartYear!=-1)
-        mapPOSinTimePattern.put(indexStartYear, "year");
-        if (indexStartMonth!=-1)
-        mapPOSinTimePattern.put(indexStartMonth, "month");
-        if (indexStartDay!=-1)
-        mapPOSinTimePattern.put(indexStartDay, "day");
-        if (indexStartHour!=-1)
-        mapPOSinTimePattern.put(indexStartHour, "hour");
-        if (indexStartMinute!=-1)        
-        mapPOSinTimePattern.put(indexStartMinute, "minute");
-        if (indexStartSecond!=-1)
-        mapPOSinTimePattern.put(indexStartSecond, "second");
+        if (indexStartYear != -1) {
+            mapPOSinTimePattern.put(indexStartYear, "year");
+        }
+        if (indexStartMonth != -1) {
+            mapPOSinTimePattern.put(indexStartMonth, "month");
+        }
+        if (indexStartDay != -1) {
+            mapPOSinTimePattern.put(indexStartDay, "day");
+        }
+        if (indexStartHour != -1) {
+            mapPOSinTimePattern.put(indexStartHour, "hour");
+        }
+        if (indexStartMinute != -1) {
+            mapPOSinTimePattern.put(indexStartMinute, "minute");
+        }
+        if (indexStartSecond != -1) {
+            mapPOSinTimePattern.put(indexStartSecond, "second");
+        }
 
         Iterator<Integer> itTimeFields = mapPOSinTimePattern.keySet().iterator();
         int j = 0;
         orderOfTimeFieldsInUserPattern = new String[mapPOSinTimePattern.keySet().size()];
-        
+
         while (itTimeFields.hasNext()) {
             int currRank = itTimeFields.next();
-            
-           orderOfTimeFieldsInUserPattern[j] = mapPOSinTimePattern.get(currRank);
+
+            orderOfTimeFieldsInUserPattern[j] = mapPOSinTimePattern.get(currRank);
             System.out.println("group number for " + orderOfTimeFieldsInUserPattern[j] + " is " + (j + 1));
             j++;
         }
 
-        for (int i = 0;i<orderOfTimeFieldsInUserPattern.length;i++){
-            mapOrderTimeFields.put(orderOfTimeFieldsInUserPattern[i],i+1);
-            
+        for (int i = 0; i < orderOfTimeFieldsInUserPattern.length; i++) {
+            mapOrderTimeFields.put(orderOfTimeFieldsInUserPattern[i], i + 1);
+
         }
 
 
@@ -291,7 +307,7 @@ public class Main implements Runnable {
         bw.newLine();
         bw.write("    <meta lastmodifieddate=\"" + dateFormat.format(date) + "\">");
         bw.newLine();
-        bw.write("<creator>gexf file generated with Eonydes - see www.clementlevallois.net/software.php</creator>");
+        bw.write("<creator>gexf file generated with Eonydis - see www.clementlevallois.net</creator>");
         bw.newLine();
         bw.write("    </meta>");
         bw.newLine();
@@ -301,7 +317,7 @@ public class Main implements Runnable {
         bw.newLine();
 
         for (int i = 0; i < nodeAttributes.length; i++) {
-            bw.write("      <attribute id=\"" + nodeAttributes[i] + "\" title=\"" + nodeAttributes[i] + "\" type=\"string\"></attribute>");
+            bw.write("      <attribute id=\"" + nodeAttributes[i] + "\" title=\"" + nodeAttributes[i] + "\" type=\"float\"></attribute>");
             bw.newLine();
         }
         bw.write("    </attributes>");
@@ -309,16 +325,20 @@ public class Main implements Runnable {
         bw.write("    <attributes class=\"edge\" mode=\"dynamic\">");
         bw.newLine();
 
-        for (int i = 0; i < edgeAttributes.length - 1; i++) {
-
-            bw.write("      <attribute id=\"" + edgeAttributes[i] + "\" title=\"" + edgeAttributes[i] + "\" type=\"string\"></attribute>");
-            bw.newLine();
-        }
-
         if (edgeWeight != null) {
             bw.write("      <attribute id=\"weight\" title=\"Weight\" type=\"float\"></attribute>");
             bw.newLine();
+            lengthEdgeAttributesArray = edgeAttributes.length - 1;
+
+        } else {
+            lengthEdgeAttributesArray = edgeAttributes.length;
         }
+
+        for (int i = 0; i < lengthEdgeAttributesArray; i++) {
+            bw.write("      <attribute id=\"" + edgeAttributes[i] + "\" title=\"" + edgeAttributes[i] + "\" type=\"float\"></attribute>");
+            bw.newLine();
+        }
+
         bw.write("    </attributes>");
         bw.newLine();
         bw.write("<nodes>");
@@ -338,7 +358,7 @@ public class Main implements Runnable {
         System.out.println("Number of nodes: " + setNodes.size());
         while (it.hasNext()) {
             countNodesLoops++;
-            GUIMain.screen6.jProgressBar1.setValue(Math.round((float)countNodesLoops/(float)(setNodes.size()+listTransactionsAndDates.size())*100));
+            GUIMain.screen6.jProgressBar1.setValue(Math.round((float) countNodesLoops / (float) (setNodes.size() + listTransactionsAndDates.size()) * 100));
 
             String currNode = (String) it.next();
 
@@ -373,32 +393,31 @@ public class Main implements Runnable {
         ListIterator<Triple<HashMap<String, String>, Pair<String, String>, LocalDate>> it = listTransactionsAndDates.listIterator();
         System.out.println("Number of transactions: " + listTransactionsAndDates.size());
         int edgeCounter = 0;
-        int transactionCounter = 1;
+        int transactionCounter = 0;
 
         //iterate through all transactions
         while (it.hasNext()) {
-            GUIMain.screen6.jProgressBar1.setValue(Math.round((float)(countNodesLoops+transactionCounter)/(float)(setNodes.size()+listTransactionsAndDates.size())*100));
+            GUIMain.screen6.jProgressBar1.setValue(Math.round((float) (countNodesLoops + transactionCounter + 1) / (float) (setNodes.size() + listTransactionsAndDates.size()) * 100));
             // this triple records the full transaction, the pair of node of this transaction, and the date of the transaction.
             Triple<HashMap<String, String>, Pair<String, String>, LocalDate> currTrans = it.next();
 
             //these two lines take the pair of nodes of this current transaction and checks with a boolean whether it is a new one or not
             Pair<String, String> currPair = currTrans.getMiddle();
             boolean newNodesPair = nodesPairs.add(currPair.getLeft().concat(currPair.getRight()));
-            transactionCounter++;
+
 
             //the processus of edge creation is launched only if the transaction deals with a pair of nodes which was has not been already treated
             if (newNodesPair) {
 
                 edgeCounter++;
                 //pool.execute(new WorkerThreadEdges(edgeCounter, transactionCounter,currTrans));
-
                 //the processus of edge creation takes needs an edge counter, a transaction counter and the full transaction on which we are currently iterating
                 new WorkerThreadEdges(edgeCounter, transactionCounter, currTrans);
                 if (edgeCounter % 100 == 0) {
                     System.out.println(edgeCounter);
                 }
             }
-
+            transactionCounter++;
         } //end looping through the list of Transactions and their corresponding dates and pairs of nodes   
 
 

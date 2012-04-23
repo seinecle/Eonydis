@@ -56,9 +56,10 @@ public class WorkerThreadEdges implements Runnable {
 
         //we start a new iteration on the list of transactions. But we start the iteration at the current transaction up to the end of the file,
         //because we now the previous ones have been treated already
-        ListIterator<Triple<HashMap<String, String>, Pair<String, String>, LocalDate>> it = Main.listTransactionsAndDates.listIterator(transactionCounter - 1);
 
-        //this will record all the dates (several identical dates possible) when the pair of banks of the edge exists
+        ListIterator<Triple<HashMap<String, String>, Pair<String, String>, LocalDate>> it = Main.listTransactionsAndDates.listIterator(transactionCounter);
+
+        //this will record all the dates (several identical dates possible) when the pair of agents of the edge exists
         TreeMultiset<LocalDate> setMultiDates = TreeMultiset.create();
 
         //this will record the values corresponding to the multiple dates
@@ -77,16 +78,19 @@ public class WorkerThreadEdges implements Runnable {
             Triple<HashMap<String, String>, Pair<String, String>, LocalDate> currTrans = it.next();
             Pair currPair = currTrans.getMiddle();
 
+//            System.out.println("currPair: " + currPair.getLeft() + " " + currPair.getRight());
+//            System.out.println("refNodesPair: " + refNodesPair.getLeft() + " " + refNodesPair.getRight());
+//            System.out.println("we are in the first loop");
+
             //only if the current edge (pair of items) is present should the transaction be considered
             if (currPair.equals(refNodesPair)) {
 
                 //beginning of the loop through edge attributes
                 for (int i = 0; i < Main.edgeAttributes.length; i++) {
-                    
-                 // this is where a bifurcation should be made for String attributes
-                 //ideally I'd use generics but I've no time for that...   
+                    // this is where a bifurcation should be made for String attributes
+                    //ideally I'd use generics but I've no time for that...   
 
-                    
+
                     //This try-catch treats null values for attributes as zeros.
                     try {
                         currValue = Float.parseFloat(currTrans.getLeft().get(Main.edgeAttributes[i]));
@@ -170,7 +174,7 @@ public class WorkerThreadEdges implements Runnable {
         StringBuilder oneEdgeSpells = new StringBuilder();
         StringBuilder oneEdgeFull = new StringBuilder();
 
-        oneEdgeAttValues.append("<attvalues>\n");
+        oneEdgeAttValues.append("    <attvalues>\n");
 
         Iterator<Spell> listSpellsIt = listSpells.iterator();
 
@@ -180,14 +184,11 @@ public class WorkerThreadEdges implements Runnable {
 
             Spell currSpell = listSpellsIt.next();
             for (int i = 0; i < currSpell.values.length; i++) {
-                if (Main.edgeWeight != null) {
-                    if (Main.edgeWeight.equals(Main.edgeAttributes[i])) {
 
-                        oneEdgeAttValues.append("<attvalue for=\"weight\" value=\"").append(currSpell.values[i]).append("\" start=\"");
-
-                    }
+                if (Main.edgeWeight.equals(Main.edgeAttributes[i])) {
+                    oneEdgeAttValues.append("        <attvalue for=\"weight\" value=\"").append(currSpell.values[i]).append("\" start=\"");
                 } else {
-                    oneEdgeAttValues.append("<attvalue for=\"").append(Main.edgeAttributes[i]).append("\" value=\"").append(currSpell.values[i]).append("\" start=\"");
+                    oneEdgeAttValues.append("        <attvalue for=\"").append(Main.edgeAttributes[i]).append("\" value=\"").append(currSpell.values[i]).append("\" start=\"");
                 }
 
                 oneEdgeAttValues.append(currSpell.date).append("\" ");
@@ -255,7 +256,7 @@ public class WorkerThreadEdges implements Runnable {
             PairDates<LocalDate, LocalDate> currPair = iteratorStartEndDates.next();
             LocalDate startDate = currPair.getLeft();
             LocalDate endDate = currPair.getRight();
-            oneEdgeSpells.append("<spell start=\"");
+            oneEdgeSpells.append("        <spell start=\"");
             oneEdgeSpells.append(startDate).append("\" ");
             oneEdgeSpells.append("end=\"");
             oneEdgeSpells.append(endDate).append("\" ");
@@ -273,11 +274,11 @@ public class WorkerThreadEdges implements Runnable {
         //this condition deals with the case when no edge attributes were selected by the user
         if (Main.edgeAttributes.length != 0) {
             oneEdgeFull.append(oneEdgeAttValues);
-            oneEdgeFull.append("</attvalues>\n");
+            oneEdgeFull.append("    </attvalues>\n");
         }
-        oneEdgeFull.append("<spells>\n");
+        oneEdgeFull.append("    <spells>\n");
         oneEdgeFull.append(oneEdgeSpells);
-        oneEdgeFull.append("</spells>\n");
+        oneEdgeFull.append("    </spells>\n");
         oneEdgeFull.append("</edge>\n");
 
         Main.edges.append(oneEdgeFull);

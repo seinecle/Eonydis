@@ -20,7 +20,7 @@ public class Screen1 extends javax.swing.JFrame {
     public String workingDirectory;
     private boolean fileSelected;
     private String fileSelectedPathANdName;
-    private String fileSelectedName;
+    public String fileSelectedName;
 
     /**
      *
@@ -190,19 +190,16 @@ public class Screen1 extends javax.swing.JFrame {
                 //                    args[1] = String.valueOf(countPDF);
 
 
-                Runnable r = new eonydis.Main(args[0], args[2],args[3]);
+                Runnable r = new eonydis.Main(args[0], args[2], args[3]);
                 new Thread(r).start();
     }//GEN-LAST:event_CreateDynamicGexfActionPerformed
         }
 
     }
         private void underTheHoodButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underTheHoodButtonActionPerformed
-        this.setVisible(false);// TODO add your handling code here:
-        GUIMain.screen3.setVisible(true);// TODO add your handling code here:
+            this.setVisible(false);// TODO add your handling code here:
+            GUIMain.screen3.setVisible(true);// TODO add your handling code here:
     }//GEN-LAST:event_underTheHoodButtonActionPerformed
-
-    
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateDynamicGexf;
     private javax.swing.JLabel jLabel1;

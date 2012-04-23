@@ -163,12 +163,11 @@ public class WorkerThreadNodes implements Runnable {
         Iterator<Spell> listSpellsIt = listSpells.iterator();
 
 
-        listSpellsIt = listSpells.iterator();
         while (listSpellsIt.hasNext()) {
 
             Spell currSpell = listSpellsIt.next();
             for (int i = 0; i < currSpell.values.length; i++) {
-                oneNodeAttValues.append("<attvalue for=\"")
+                oneNodeAttValues.append("        <attvalue for=\"")
                         .append(nodeAttributes[i]).append("\" value=\"")
                         .append(currSpell.values[i]).append("\" start=\"");
 
@@ -238,7 +237,7 @@ public class WorkerThreadNodes implements Runnable {
             PairDates<LocalDate, LocalDate> currPair = iteratorStartEndDates.next();
             LocalDate startDate = currPair.getLeft();
             LocalDate endDate = currPair.getRight();
-            oneNodeSpells.append("<spell start=\"");
+            oneNodeSpells.append("        <spell start=\"");
             oneNodeSpells.append(startDate).append("\" ");
             oneNodeSpells.append("end=\"");
             oneNodeSpells.append(endDate).append("\" ");
@@ -258,13 +257,13 @@ public class WorkerThreadNodes implements Runnable {
         oneNodeFull.append(currNode);
         oneNodeFull.append("\">");
         oneNodeFull.append("\n");
-        oneNodeFull.append("<attvalues>");
+        oneNodeFull.append("    <attvalues>");
         oneNodeFull.append("\n");
         oneNodeFull.append(oneNodeAttValues);
-        oneNodeFull.append("</attvalues>\n");
-        oneNodeFull.append("<spells>\n");
+        oneNodeFull.append("    </attvalues>\n");
+        oneNodeFull.append("    <spells>\n");
         oneNodeFull.append(oneNodeSpells);
-        oneNodeFull.append("</spells>\n");
+        oneNodeFull.append("    </spells>\n");
         oneNodeFull.append("</node>\n");
 
         Main.nodes.append(oneNodeFull);
