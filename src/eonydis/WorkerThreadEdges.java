@@ -28,6 +28,7 @@ public class WorkerThreadEdges implements Runnable {
     private boolean newSpell2 = false;
     private Float[] emptyValues = new Float[0];
     private Float currValue;
+    private String currValueString;
 
     public WorkerThreadEdges(int edgeCounter, int transactionCounter, Triple currTrans) {
 
@@ -87,10 +88,27 @@ public class WorkerThreadEdges implements Runnable {
 
                 //beginning of the loop through edge attributes
                 for (int i = 0; i < Main.edgeAttributes.length; i++) {
+//                    System.out.println("in edge worker - curren edge attribute is "+Main.edgeAttributes[i]+", corresponding to indice "+i);
                     // this is where a bifurcation should be made for String attributes
                     //ideally I'd use generics but I've no time for that...   
 
+                    if (Main.setIndicesStringEdgeAttributes.contains(i)) {
 
+                        try {
+                            currValueString = currTrans.getLeft().get(Main.edgeAttributes[i]);
+                        } catch (NullPointerException e) {
+                            currValueString = "";
+                        }
+                        //adds the date of this transaction to a set of dates
+                        setMultiDates.add(currTrans.getRight());
+                        
+                        
+                        
+                    }
+                    
+                    //end of the case "string values". Beginning case float values
+                    
+                    
                     //This try-catch treats null values for attributes as zeros.
                     try {
                         currValue = Float.parseFloat(currTrans.getLeft().get(Main.edgeAttributes[i]));

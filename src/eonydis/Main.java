@@ -57,6 +57,8 @@ public class Main implements Runnable {
     public static Object[] sourceAttributesObjects;
     public static String[] targetAttributes;
     public static Object[] targetAttributesObjects;
+    public static String[] stringAttributes;
+    public static Object[] stringAttributesObjects;
     public static String userDefinedTimeFormat;
     public static String timeField;
     String pathFile;
@@ -70,6 +72,10 @@ public class Main implements Runnable {
     static int countNodesLoops = 0;
     public static boolean doAverage;
     public static int lengthEdgeAttributesArray;
+    public static String[] tempAllAttributes;
+    public static String[] remainingAttributes;
+    public static HashSet<Integer> setIndicesStringEdgeAttributes = new HashSet();
+    public static HashSet<Integer> setIndicesStringNodeAttributes = new HashSet();
 
     public Main(String wk, String file, String doAverage) {
 
@@ -148,6 +154,18 @@ public class Main implements Runnable {
 
         Screen2.toBeSelected.setText("<html>select one attribute for <b>edge weight</b><br>(no attribute for weight? just click next)</html>");
         Screen2.count = 5;
+
+
+        //this creates an array of node attributes made of the attributes of source nodes AND attributes of the target nodes
+        nodeAttributes = new String[sourceAttributes.length + targetAttributes.length];
+
+        for (int i = 0; i < sourceAttributes.length; i++) {
+            nodeAttributes[i] = sourceAttributes[i];
+        }
+        for (int i = 0; i < targetAttributes.length; i++) {
+            nodeAttributes[i + sourceAttributes.length] = targetAttributes[i];
+        }
+
     }
 
     public static void selectEdgeWeight() {
@@ -175,7 +193,7 @@ public class Main implements Runnable {
         Screen2.count = 7;
 
 
-        //this appendix to SelectEdgeAttributes adds the edge attribute selected for weight - if any
+        //this appendix to SelectEdgeAttributes adds the edge attribute selected for weight (if any) to the end of the list of edge attributes
 
         if (edgeWeight != null) {
             String[] tempEdgeAttributes = new String[edgeAttributes.length + 1];
@@ -185,11 +203,61 @@ public class Main implements Runnable {
             System.arraycopy(tempEdgeAttributes, 0, edgeAttributes, 0, edgeAttributes.length);
         }
 
+        
+        //this appendix collates all selected attributes - for nodes and edges - into a single array
+        System.out.println("length edge Attributes is: " + edgeAttributes.length);
+        System.out.println("length node Attributes is: " + nodeAttributes.length);
 
+        tempAllAttributes = new String[edgeAttributes.length + nodeAttributes.length];
+        System.arraycopy(edgeAttributes, 0, tempAllAttributes, 0, edgeAttributes.length);
+        System.arraycopy(nodeAttributes, 0, tempAllAttributes, edgeAttributes.length, nodeAttributes.length);
+        remainingAttributes = new String[Screen2.model.getSize()];
+        Screen2.model.copyInto(remainingAttributes);
+        Screen2.model.clear();
+
+
+        for (int i = 0; i < tempAllAttributes.length; i++) {
+            Screen2.model.add(i, tempAllAttributes[i]);
+        }
+        Screen2.toBeSelected.setText("<html>among the attributes you selected,<br> which are <b>textual</b> attributes?<br> (attributes representing text information,<br> not numbers).</html>");
+
+    }
+
+    public static void selectStringAttributes() {
+        stringAttributesObjects = Screen2.listFields.getSelectedValues();
+        stringAttributes = new String[stringAttributesObjects.length];
+
+        for (int i = 0; i < stringAttributesObjects.length; i++) {
+            System.out.println("selected string attribute(s): " + stringAttributesObjects[i].toString());
+
+            for (int j = 0; j < tempAllAttributes.length; j++) {
+                if (tempAllAttributes[j].equals(stringAttributesObjects[i].toString())) {
+                    if (j<edgeAttributes.length){
+                    System.out.println("indice of current string attribute "+tempAllAttributes[j]+" is: " + j);
+                        setIndicesStringEdgeAttributes.add(j);}
+                    else {setIndicesStringNodeAttributes.add(j-edgeAttributes.length);
+                    System.out.println("indice of current string attribute "+tempAllAttributes[j]+" is: " + (j-edgeAttributes.length));
+
+                    }
+                }
+            }
+
+        }
+        Screen2.toBeSelected.setText("<html>select <b>time field<b></html>");
+
+        Screen2.model.clear();
+
+        for (int i = 0; i < remainingAttributes.length; i++) {
+            Screen2.model.add(i, remainingAttributes[i]);
+        }
+
+        Screen2.count = 8;
 
     }
 
     public static void selectTimeField() {
+
+
         timeField = (String) Screen2.listFields.getSelectedValue();
         System.out.println("time field is: " + timeField);
 
@@ -198,7 +266,7 @@ public class Main implements Runnable {
         GUIMain.screen4.setVisible(true);
 
         Screen2.OKButton.setText("<html><b>create gexf</b></html>");
-        Screen2.count = 8;
+        Screen2.count = 9;
 
     }
 
@@ -286,16 +354,6 @@ public class Main implements Runnable {
 
         Clock headerWriting = new Clock("writing the header of the gexf file");
 
-
-        //this creates an array of node attributes made of the attributes of source nodes AND attributes of the target nodes
-        nodeAttributes = new String[sourceAttributes.length + targetAttributes.length];
-
-        for (int i = 0; i < sourceAttributes.length; i++) {
-            nodeAttributes[i] = sourceAttributes[i];
-        }
-        for (int i = 0; i < targetAttributes.length; i++) {
-            nodeAttributes[i + sourceAttributes.length] = targetAttributes[i];
-        }
 
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
