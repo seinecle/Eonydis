@@ -52,7 +52,6 @@ public class Screen1 extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        underTheHoodButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("eonydis by www.clementlevallois.net");
@@ -83,13 +82,6 @@ public class Screen1 extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Script MT Bold", 0, 36)); // NOI18N
         jLabel5.setText("Eonydis");
 
-        underTheHoodButton.setText("under the hood");
-        underTheHoodButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                underTheHoodButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -109,10 +101,6 @@ public class Screen1 extends javax.swing.JFrame {
                             .addComponent(selectFileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(CreateDynamicGexf, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))))
                 .addContainerGap(114, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(underTheHoodButton)
-                .addGap(126, 126, 126))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,9 +117,7 @@ public class Screen1 extends javax.swing.JFrame {
                 .addComponent(selectFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(CreateDynamicGexf, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(160, 160, 160)
-                .addComponent(underTheHoodButton)
-                .addGap(24, 24, 24))
+                .addGap(207, 207, 207))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -185,7 +171,8 @@ public class Screen1 extends javax.swing.JFrame {
                 args[0] = workingDirectory;
                 args[1] = fileSelectedPathANdName;
                 args[2] = fileSelectedName;
-                args[3] = new Boolean(GUIMain.screen3.jRadioButton1.isSelected()).toString();
+                //args[3] = new Boolean(GUIMain.screen3.jRadioButton1.isSelected()).toString();
+                args[3] = "false";
                 //logArea.append(workingDirectory);
                 //                    args[1] = String.valueOf(countPDF);
 
@@ -196,10 +183,6 @@ public class Screen1 extends javax.swing.JFrame {
         }
 
     }
-        private void underTheHoodButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underTheHoodButtonActionPerformed
-            this.setVisible(false);// TODO add your handling code here:
-            GUIMain.screen3.setVisible(true);// TODO add your handling code here:
-    }//GEN-LAST:event_underTheHoodButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateDynamicGexf;
     private javax.swing.JLabel jLabel1;
@@ -207,6 +190,5 @@ public class Screen1 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton selectFileButton;
-    private javax.swing.JButton underTheHoodButton;
     // End of variables declaration//GEN-END:variables
 }

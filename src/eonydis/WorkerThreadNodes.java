@@ -5,10 +5,10 @@
 package eonydis;
 
 import com.google.common.collect.TreeMultiset;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.Map.Entry;
 import levallois.clement.utils.PairDates;
+import levallois.clement.utils.Triple;
 import org.joda.time.LocalDate;
 
 /**
@@ -18,11 +18,10 @@ import org.joda.time.LocalDate;
 public class WorkerThreadNodes implements Runnable {
 
     private final String currNode;
-    private int counterDates;
-    private boolean newSpell2;
-    private float currValue;
-    private Float[] emptyValues = new Float[0];
-    private String [] nodeAttributes;
+    private float currValueFloat;
+    private String currValueString;
+    private HashSet<String> setNodeAttributes = new HashSet();
+    private boolean onlyOneRecordNeedsToBeRead = true;
 
     WorkerThreadNodes(String nodeId) {
 
@@ -36,140 +35,261 @@ public class WorkerThreadNodes implements Runnable {
     public void run() {
 
 
-        LinkedList<Spell> listSpells = new LinkedList();
-        //a treeset to keep a the dates in chronological order
+        LinkedList<SpellFloat> listSpellsFloat = new LinkedList();
+        LinkedList<SpellString> listSpellsString = new LinkedList();
 
-        TreeMultiset<PairDates> setStartEndDates = TreeMultiset.create();
+        HashMap mapNodeStaticAttributesToTheirValues = new HashMap();
+
+        //a treeset to keep a the dates in chronological order
+        TreeMultiset<PairDates> setStartEndDates;
 
         TreeMultiset<LocalDate> setMultiDates = TreeMultiset.create();
-        TreeMap<LocalDate, Float[]> setMultiValues = new TreeMap();
+        //this will record the values corresponding to the multiple dates
+        // since we have multiple attributes, WITHIN EACH TRANSACTION we will have to loop for as many edge attributes as the user has defined in Main.edgeAttributes
+        HashMap<LocalDate, HashMap<String, Float>> mapValuesFloat = new HashMap();
+        HashMap<LocalDate, HashMap<String, String>> mapValuesString = new HashMap();
+
+        boolean oneStringAttributeDetected = false;
 
 
         //iterate through the list of all pairs (one Node, one date)
-        for (int i = 0; i < Main.listNodesAndDates.size(); i++) {
+        Iterator<Triple<Node, LocalDate, HashMap<String, String>>> listNodesAndDatesIterator = Main.listNodesAndDates.iterator();
+        while (listNodesAndDatesIterator.hasNext()) {
 
-            String currNodeId = Main.listNodesAndDates.get(i).getLeft().getNodeId();
+            Triple<Node, LocalDate, HashMap<String, String>> currNodeAndDate = listNodesAndDatesIterator.next();
+            String currNodeId = currNodeAndDate.getLeft().getNodeId();
+            LocalDate currDate = currNodeAndDate.getMiddle();
+            HashMap<String, String> currAllFieldValues = currNodeAndDate.getRight();
 
 
+            HashMap<String, String> stringValues = new HashMap();
 
             //when the Node of interest is found in the list, add the corresponding date to a set of dates for this Node
             if (currNodeId.equals(currNode)) {
 
-                
-                if (currNode.equals(Main.listNodesAndDates.get(i).getRight().get(Main.source))){
-                    
-                    nodeAttributes = new String [Main.sourceAttributes.length];
-                    System.arraycopy(Main.sourceAttributes, 0, nodeAttributes, 0, Main.sourceAttributes.length);
-                    
+
+
+
+                setNodeAttributes.clear();
+
+                if (currNodeId.equals(currAllFieldValues.get(Main.source))) {
+
+//                    nodeAttributes = new String[Main.sourceAttributes.length];
+                    setNodeAttributes.addAll(Arrays.asList(Main.sourceAttributes));
+//                    System.arraycopy(Main.sourceAttributes, 0, nodeAttributes, 0, Main.sourceAttributes.length);
+
+                } else {
+
+//                    nodeAttributes = new String[Main.targetAttributes.length];
+                    setNodeAttributes.addAll(Arrays.asList(Main.targetAttributes));
+//                    System.arraycopy(Main.targetAttributes, 0, nodeAttributes, 0, Main.targetAttributes.length);
+
                 }
-                
-                else {
-                    
-                    nodeAttributes = new String [Main.targetAttributes.length];
-                    System.arraycopy(Main.targetAttributes, 0, nodeAttributes, 0, Main.targetAttributes.length);
 
-                
+
+                //THIS TAKES CARE OF STATIC NODE ATTRIBUTES
+                if (onlyOneRecordNeedsToBeRead) {
+                    Iterator<String> setNodeStaticAttributesIterator = Main.setNodeStaticAttributes.iterator();
+                    while (setNodeStaticAttributesIterator.hasNext()) {
+                        String currNodeStaticAttribute = setNodeStaticAttributesIterator.next();
+                        if (setNodeAttributes.contains(currNodeStaticAttribute)) {
+                            mapNodeStaticAttributesToTheirValues.put(currNodeStaticAttribute, currAllFieldValues.get(currNodeStaticAttribute));
+                        }
+
+                    }
+                    onlyOneRecordNeedsToBeRead = false;
                 }
+
+                //DELETION OF THE ATTRIBUTES WHICH ARE STATIC TO OBTAIN A LIST OF ONLY DYNAMIC ATTRIBUTES
+                Iterator<String> setNodeStaticAttributesIterator = Main.setNodeStaticAttributes.iterator();
+                while (setNodeStaticAttributesIterator.hasNext()) {
+                    setNodeAttributes.remove(setNodeStaticAttributesIterator.next());
+                }
+
+
+
+                //beginning of the loop through node dynamic attributes selected by the user. Each attribute value will be stored
                 
-                //beginning of the loop through node attributes selected by the user. Each attribute value will be stored
-                //if multiple attributes exist for the same date, they get AVERAGED (summing would be an easy implementation too)
+                Iterator<String> setNodeAttributesIterator = setNodeAttributes.iterator();
 
-                for (int j = 0; j < nodeAttributes.length; j++) {
+                while (setNodeAttributesIterator.hasNext()) {
+                    String currNodeAttribute = setNodeAttributesIterator.next();
 
-                    //This try-catch treats null values for attributes as zeros.
-                    try {
-                        currValue = Float.parseFloat(Main.listNodesAndDates.get(i).getRight().get(nodeAttributes[j]));
-                    } catch (NumberFormatException e) {
-                        currValue = (float) 0;
+
+                    //beginning of the loop through edge attributes
+//                    System.out.println("in node worker - current node attribute is "+Main.nodeAttributes[k]+", corresponding to indice "+k);
+
+                    if (Main.stringAttributes.contains(currNodeAttribute)) {
+
+                        try {
+                            currValueString = currAllFieldValues.get(currNodeAttribute);
+                            oneStringAttributeDetected = true;
+                        } catch (NullPointerException e) {
+                            currValueString = "";
+                        }
+                        stringValues.put(currNodeAttribute, currValueString);
+
+                        continue;
+
+
                     }
 
+                    //end of the case STRING values. Beginning case FLOAT values
+                    //This try-catch treats null values for attributes as zeros.
+                    try {
+                        currValueFloat = Float.parseFloat(currAllFieldValues.get(currNodeAttribute));
+                    } catch (NumberFormatException e) {
+                        currValueFloat = (float) 0;
+                    }
 
-
-
-
+                    HashMap<String, Float> storedFloatValues = new HashMap();
                     //if the list of (dates, values) already contains the date of the current transaction
-                    if (setMultiValues.containsKey(Main.listNodesAndDates.get(i).getMiddle())) {
+                    if (mapValuesFloat.containsKey(currDate)) {
 
                         //retrieve the current value stored for the date
-                        Float[] storedValue = setMultiValues.get(Main.listNodesAndDates.get(i).getMiddle());
+                        storedFloatValues = mapValuesFloat.get(currDate);
 
                         //add the currValue to the storedValue
                         //System.out.println("storedValue[j] " + storedValue[j]);
                         //System.out.println("currValue " + currValue);
 
                         //These two lines treat null values for attributes as zeros.
-                        if (storedValue[j] == null) {
-                            storedValue[j] = (float) (0);
+                        if (storedFloatValues.get(currNodeAttribute) == null) {
+                            storedFloatValues.put(currNodeAttribute, (float) 0);
                         }
 
-                        storedValue[j] = storedValue[j] + currValue;
+                        //add the currValue to the storedValue
+                        storedFloatValues.put(currNodeAttribute, storedFloatValues.get(currNodeAttribute) + currValueFloat);
 
                         //reinput the new storedValue in the list of (dates,Values)
-                        setMultiValues.put(Main.listNodesAndDates.get(i).getMiddle(), storedValue);
-                    
-                        
-                    // if this is a new date, create a new date and the corresponding new value    
+                        mapValuesFloat.put(currDate, storedFloatValues);
+
                     } else {
-                        Float[] attValues = new Float[nodeAttributes.length];
-                        attValues[j] = currValue;
-                        setMultiValues.put(Main.listNodesAndDates.get(i).getMiddle(), attValues);
+                        storedFloatValues.put(currNodeAttribute, currValueFloat);
+                        mapValuesFloat.put(currDate, storedFloatValues);
 
                     }
 
                 }
 
-                //deals with the case when no node attributes have been selected.
-                if (nodeAttributes.length == 0) {
-                    setMultiValues.put(Main.listNodesAndDates.get(i).getMiddle(), emptyValues);
 
-                }                
-                
+
+                if (oneStringAttributeDetected) {
+
+                    mapValuesString.put(currDate, stringValues);
+                }
 
                 //add the date to an ordered multiset
-                setMultiDates.add(Main.listNodesAndDates.get(i).getMiddle());
+                setMultiDates.add(currDate);
             }
+
 
         }// end of loop through the list of all pairs <Node,Date>
 
-        //iterate through all the unique dates and their unique values
-        Iterator<LocalDate> itSpells = setMultiValues.keySet().iterator();
+//        System.out.println("dates of the node: " + setMultiDates.entrySet().toString());
+        // ######################################################################
+
+        // What we have now is:
+        // HashMap<LocalDate, HashMap<String, Float>> mapValuesFloat = new HashMap();
+        // HashMap<LocalDate, HashMap<String, String>> mapValuesString = new HashMap();
+
+        // These two maps contain the set of Dates where the node appear, and for each date, the map of the attributes selected by the user.
+
+        // We iterate through each of them to build spell. Honestly, not sure this is necessary, except that it helps deal with the averaging / summing case for Floats
+
+        //Iterate through all the unique dates and their unique values for FLOAT
+        Iterator<LocalDate> itSpells = mapValuesFloat.keySet().iterator();
         while (itSpells.hasNext()) {
             LocalDate spellDate = itSpells.next();
 
-            //a spell is actually the spell itself + the associated value for the attributes of the node at this date
-            // the associated value
-            for (int j = 0; j < nodeAttributes.length; j++) {
+            // this applies the averaging of values appearing on the same date, or summing depending on the user's selection
 
-                //that's the line which implements the AVERAGE. Summing would simply drop the divisor
-                setMultiValues.get(spellDate)[j] = (float)setMultiValues.get(spellDate)[j] / (float)(setMultiDates.count(spellDate));
-               
+            HashMap<String, Float> tempFloatValues = new HashMap();
+
+            Iterator<Entry<String, Float>> mapValuesFloatCurrDateIterator = mapValuesFloat.get(spellDate).entrySet().iterator();
+            while (mapValuesFloatCurrDateIterator.hasNext()) {
+
+                Entry<String, Float> currEntry = mapValuesFloatCurrDateIterator.next();
+
+                if (Main.averageAttributes.contains(currEntry.getKey())) {
+                    tempFloatValues.put(currEntry.getKey(), currEntry.getValue() / (float) setMultiDates.count(spellDate));
+                } else {
+                    tempFloatValues.put(currEntry.getKey(), currEntry.getValue());
+                }
             }
-            
-            //deals with the case when no node attributes were selected by the user
-            if (nodeAttributes.length == 0) {
-                Spell spell = new Spell(spellDate, emptyValues);
-                listSpells.add(spell);
-            }
-            
-            Spell spell = new Spell(spellDate, setMultiValues.get(spellDate));
-            listSpells.add(spell);
+
+            mapValuesFloat.put(spellDate, tempFloatValues);
+
+
+            SpellFloat spell = new SpellFloat(spellDate, mapValuesFloat.get(spellDate));
+            listSpellsFloat.add(spell);
         }
+
+        if (oneStringAttributeDetected) {
+            itSpells = mapValuesString.keySet().iterator();
+            while (itSpells.hasNext()) {
+                LocalDate spellDate = itSpells.next();
+                SpellString spellString = new SpellString(spellDate, mapValuesString.get(spellDate));
+                listSpellsString.add(spellString);
+            }
+        }
+
+
 
         StringBuilder oneNodeAttValues = new StringBuilder();
         StringBuilder oneNodeSpells = new StringBuilder();
         StringBuilder oneNodeFull = new StringBuilder();
 
 
-        Iterator<Spell> listSpellsIt = listSpells.iterator();
+
+        // DEALS WITH STATIC VALUES
+        Iterator<Entry<String, String>> mapNodeStaticAttributesToTheirValuesIterator = mapNodeStaticAttributesToTheirValues.entrySet().iterator();
+        while (mapNodeStaticAttributesToTheirValuesIterator.hasNext()) {
+
+            Entry<String, String> currEntry = mapNodeStaticAttributesToTheirValuesIterator.next();
+            oneNodeAttValues.append("        <attvalue for=\"").append(currEntry.getKey()).append("\" value=\"").append(currEntry.getValue()).append("\"/>\n");
+        }
+
+        //DEALS WTH DYNAMIC VALUES - FLOAT
+        Iterator<SpellFloat> listSpellsItFloat = listSpellsFloat.iterator();
+        while (listSpellsItFloat.hasNext()) {
+
+            SpellFloat currSpell = listSpellsItFloat.next();
+
+            Iterator<Entry<String, Float>> floatValuesOfCurrentSpellIterator = currSpell.floatValues.entrySet().iterator();
+            while (floatValuesOfCurrentSpellIterator.hasNext()) {
+
+                Entry<String, Float> currEntry = floatValuesOfCurrentSpellIterator.next();
+                String currEntryName = currEntry.getKey();
+                Float currEntryValue = currEntry.getValue();
+
+                oneNodeAttValues.append("        <attvalue for=\"").append(currEntryName).append("\" value=\"").append(currEntryValue).append("\" start=\"");
 
 
-        while (listSpellsIt.hasNext()) {
+                oneNodeAttValues.append(currSpell.date).append("\" ");
+                oneNodeAttValues.append("end=\"");
+                oneNodeAttValues.append(currSpell.date).append("\" ");
+                oneNodeAttValues.append("/>");
+                oneNodeAttValues.append("\n");
+            }
+        }
 
-            Spell currSpell = listSpellsIt.next();
-            for (int i = 0; i < currSpell.values.length; i++) {
-                oneNodeAttValues.append("        <attvalue for=\"")
-                        .append(nodeAttributes[i]).append("\" value=\"")
-                        .append(currSpell.values[i]).append("\" start=\"");
+
+        //DEALS WTH DYNAMIC VALUES - STRING
+        Iterator<SpellString> listSpellsItString = listSpellsString.iterator();
+
+        while (listSpellsItString.hasNext()) {
+
+            SpellString currSpell = listSpellsItString.next();
+
+            Iterator<Entry<String, String>> stringValuesOfCurrentSpellIterator = currSpell.stringValues.entrySet().iterator();
+            while (stringValuesOfCurrentSpellIterator.hasNext()) {
+
+                Entry<String, String> currEntry = stringValuesOfCurrentSpellIterator.next();
+                String currEntryName = currEntry.getKey();
+                String currEntryValue = currEntry.getValue();
+
+                oneNodeAttValues.append("        <attvalue for=\"").append(currEntryName).append("\" value=\"").append(currEntryValue).append("\" start=\"");
 
 
                 oneNodeAttValues.append(currSpell.date).append("\" ");
@@ -182,68 +302,29 @@ public class WorkerThreadNodes implements Runnable {
 
 
 
-        // We now have a setMultiDates of all the dates when the two banks interact
+        // We also have a setMultiDates of all the dates when the two banks interact
         // This setMultiDates needs to be modified to delete the dates that are consecutive
-        Iterator<LocalDate> iteratorDates = setMultiDates.elementSet().iterator();
-        boolean newSpell = true;
-        LocalDate dtStart = null;
-        LocalDate dtLastCurrDate = null;
+
+        setStartEndDates = ConsecutiveSpellsCleaner.doCleaning(setMultiDates);
 
 
 
+        // FINALLY, iterate through all the dates for this node and creates corresponding spells
 
-        while (iteratorDates.hasNext()) {
-
-            if (newSpell) {
-                dtStart = iteratorDates.next();
-                dtLastCurrDate = dtStart;
-                counterDates = 0;
-            }
-
-            if (newSpell2) {
-                dtLastCurrDate = dtStart;
-                counterDates = 0;
-                newSpell2 = false;
-            }
-
-            if (iteratorDates.hasNext()) {
-                dtLastCurrDate = iteratorDates.next();
-                counterDates = counterDates + 1;
-            } else {
-
-                setStartEndDates.add(new PairDates(dtStart, dtLastCurrDate));
-                continue;
-            }
-
-
-            if (!dtStart.plusDays(counterDates).equals(dtLastCurrDate)) {
-
-                setStartEndDates.add(new PairDates(dtStart, dtStart.plusDays(counterDates - 1)));
-                dtStart = dtLastCurrDate;
-                newSpell2 = true;
-                newSpell = false;
-                if (!iteratorDates.hasNext()) {
-                    setStartEndDates.add(new PairDates(dtStart, dtStart));
-                }
-
-            } else {
-                newSpell = false;
-            }
-
-        }
-        //!!!! iterates through all the dates for this node and creates corresponding spells
         Iterator<PairDates> iteratorStartEndDates = setStartEndDates.iterator();
         while (iteratorStartEndDates.hasNext()) {
             PairDates<LocalDate, LocalDate> currPair = iteratorStartEndDates.next();
             LocalDate startDate = currPair.getLeft();
             LocalDate endDate = currPair.getRight();
+            System.out.println("printing the next date:" + startDate);
+
             oneNodeSpells.append("        <spell start=\"");
             oneNodeSpells.append(startDate).append("\" ");
             oneNodeSpells.append("end=\"");
             oneNodeSpells.append(endDate).append("\" ");
             oneNodeSpells.append("/>");
             oneNodeSpells.append("\n");
-
+            System.out.println("oneNodeSpells = " + oneNodeSpells.toString());
         }//end of the iteration trough dates
 
 
@@ -263,15 +344,11 @@ public class WorkerThreadNodes implements Runnable {
         oneNodeFull.append("    </attvalues>\n");
         oneNodeFull.append("    <spells>\n");
         oneNodeFull.append(oneNodeSpells);
+        System.out.println("oneNodeSpells at this stage is: " + oneNodeSpells.toString());
         oneNodeFull.append("    </spells>\n");
         oneNodeFull.append("</node>\n");
 
         Main.nodes.append(oneNodeFull);
-
-
-
-
-
 
     } //end looping throught the set of unique Nodes
 }

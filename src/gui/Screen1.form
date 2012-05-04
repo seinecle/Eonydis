@@ -68,11 +68,6 @@
                   </Group>
                   <EmptySpace pref="114" max="32767" attributes="0"/>
               </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="underTheHoodButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="126" max="-2" attributes="0"/>
-              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -92,9 +87,7 @@
                   <Component id="selectFileButton" min="-2" pref="53" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="CreateDynamicGexf" min="-2" pref="40" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="160" max="-2" attributes="0"/>
-                  <Component id="underTheHoodButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="207" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -139,14 +132,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Eonydis"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="underTheHoodButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="under the hood"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="underTheHoodButtonActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>

@@ -57,8 +57,12 @@ public class Main implements Runnable {
     public static Object[] sourceAttributesObjects;
     public static String[] targetAttributes;
     public static Object[] targetAttributesObjects;
-    public static String[] stringAttributes;
+    public static HashSet<String> stringAttributes;
     public static Object[] stringAttributesObjects;
+    public static HashSet<String> averageAttributes;
+    public static HashSet<String> setNodeStaticAttributes;
+    public static Object[] averageAttributesObjects;
+    public static Object[] staticAttributesObjects;
     public static String userDefinedTimeFormat;
     public static String timeField;
     String pathFile;
@@ -203,8 +207,9 @@ public class Main implements Runnable {
             System.arraycopy(tempEdgeAttributes, 0, edgeAttributes, 0, edgeAttributes.length);
         }
 
-        
+
         //this appendix collates all selected attributes - for nodes and edges - into a single array
+        //this will be useful later for the indexing of which attributes will be Float, and which will be String
         System.out.println("length edge Attributes is: " + edgeAttributes.length);
         System.out.println("length node Attributes is: " + nodeAttributes.length);
 
@@ -219,30 +224,72 @@ public class Main implements Runnable {
         for (int i = 0; i < tempAllAttributes.length; i++) {
             Screen2.model.add(i, tempAllAttributes[i]);
         }
-        Screen2.toBeSelected.setText("<html>among the attributes you selected,<br> which are <b>textual</b> attributes?<br> (attributes representing text information,<br> not numbers).</html>");
+        Screen2.toBeSelected.setText("<html>among the attributes you selected,<br> which are <b>static</b> attributes?<br> (attributes not time-dependent).</html>");
+
+    }
+
+    public static void selectStaticAttributes() {
+        staticAttributesObjects = Screen2.listFields.getSelectedValues();
+        setNodeStaticAttributes = new HashSet();
+
+        for (int i = 0; i < staticAttributesObjects.length; i++) {
+            System.out.println("selected attribute(s) to be averaged: " + staticAttributesObjects[i].toString());
+            setNodeStaticAttributes.add(staticAttributesObjects[i].toString());
+
+        }
+
+
+        Screen2.toBeSelected.setText("<html>among the attributes you selected,<br> which are <b>textual</b> attributes?<br> (attributes representing textual information).</html>");
+
+        Screen2.model.clear();
+
+
+        for (int i = 0; i < tempAllAttributes.length; i++) {
+            Screen2.model.add(i, tempAllAttributes[i]);
+        }
+
+        Screen2.count = 8;
 
     }
 
     public static void selectStringAttributes() {
         stringAttributesObjects = Screen2.listFields.getSelectedValues();
-        stringAttributes = new String[stringAttributesObjects.length];
+        stringAttributes = new HashSet();
 
         for (int i = 0; i < stringAttributesObjects.length; i++) {
-            System.out.println("selected string attribute(s): " + stringAttributesObjects[i].toString());
-
-            for (int j = 0; j < tempAllAttributes.length; j++) {
-                if (tempAllAttributes[j].equals(stringAttributesObjects[i].toString())) {
-                    if (j<edgeAttributes.length){
-                    System.out.println("indice of current string attribute "+tempAllAttributes[j]+" is: " + j);
-                        setIndicesStringEdgeAttributes.add(j);}
-                    else {setIndicesStringNodeAttributes.add(j-edgeAttributes.length);
-                    System.out.println("indice of current string attribute "+tempAllAttributes[j]+" is: " + (j-edgeAttributes.length));
-
-                    }
-                }
-            }
+            System.out.println("selected string attribute: " + stringAttributesObjects[i].toString());
+            stringAttributes.add(stringAttributesObjects[i].toString());
 
         }
+
+
+        Screen2.toBeSelected.setText("<html>select numerical attributes to be <b>averaged<b></html>");
+
+        Screen2.model.clear();
+        int indexFloatAttribute = 0;
+        for (int i = 0; i < tempAllAttributes.length; i++) {
+
+            if (!stringAttributes.contains(tempAllAttributes[i]) & !setNodeStaticAttributes.contains(tempAllAttributes[i])) {
+                Screen2.model.add(indexFloatAttribute, tempAllAttributes[i]);
+                indexFloatAttribute++;
+            }
+        }
+
+        Screen2.count = 9;
+
+    }
+
+    public static void selectAverageAttributes() {
+        averageAttributesObjects = Screen2.listFields.getSelectedValues();
+        averageAttributes = new HashSet();
+
+        for (int i = 0; i < averageAttributesObjects.length; i++) {
+            System.out.println("selected attribute(s) to be averaged: " + averageAttributesObjects[i].toString());
+            averageAttributes.add(averageAttributesObjects[i].toString());
+
+        }
+
+
         Screen2.toBeSelected.setText("<html>select <b>time field<b></html>");
 
         Screen2.model.clear();
@@ -251,7 +298,7 @@ public class Main implements Runnable {
             Screen2.model.add(i, remainingAttributes[i]);
         }
 
-        Screen2.count = 8;
+        Screen2.count = 10;
 
     }
 
@@ -371,36 +418,79 @@ public class Main implements Runnable {
         bw.newLine();
         bw.write("    <graph defaultedgetype=\"directed\" timeformat=\"date\" mode=\"dynamic\">");
         bw.newLine();
-        bw.write("    <attributes class=\"node\" mode=\"dynamic\">");
-        bw.newLine();
-
-        for (int i = 0; i < nodeAttributes.length; i++) {
-            bw.write("      <attribute id=\"" + nodeAttributes[i] + "\" title=\"" + nodeAttributes[i] + "\" type=\"float\"></attribute>");
+        if (!setNodeStaticAttributes.isEmpty()) {
+            bw.write("    <attributes class=\"node\" mode=\"static\">");
+            bw.newLine();
+            Iterator<String> setNodeStaticAttributesIterator = setNodeStaticAttributes.iterator();
+            while (setNodeStaticAttributesIterator.hasNext()) {
+                String currNodeStaticAttribute = setNodeStaticAttributesIterator.next();
+                if (stringAttributes.contains(currNodeStaticAttribute)) {
+                    bw.write("      <attribute id=\"" + currNodeStaticAttribute + "\" title=\"" + currNodeStaticAttribute + "\" type=\"string\"></attribute>");
+                } else {
+                    bw.write("      <attribute id=\"" + currNodeStaticAttribute + "\" title=\"" + currNodeStaticAttribute + "\" type=\"float\"></attribute>");
+                }
+                bw.newLine();
+            }
+            bw.write("    </attributes>");
             bw.newLine();
         }
-        bw.write("    </attributes>");
-        bw.newLine();
-        bw.write("    <attributes class=\"edge\" mode=\"dynamic\">");
-        bw.newLine();
+        HashSet setNodeDynamicAttributes = new HashSet();
+        setNodeDynamicAttributes.addAll(Arrays.asList(Main.sourceAttributes));
+        setNodeDynamicAttributes.addAll(Arrays.asList(Main.targetAttributes));
+        setNodeDynamicAttributes.removeAll(setNodeStaticAttributes);
 
-        if (edgeWeight != null) {
-            bw.write("      <attribute id=\"weight\" title=\"Weight\" type=\"float\"></attribute>");
+        if (!setNodeDynamicAttributes.isEmpty()) {
+            bw.write("    <attributes class=\"node\" mode=\"dynamic\">");
             bw.newLine();
-            lengthEdgeAttributesArray = edgeAttributes.length - 1;
-
-        } else {
-            lengthEdgeAttributesArray = edgeAttributes.length;
+            Iterator<String> setNodeDynamicAttributesIterator = setNodeDynamicAttributes.iterator();
+            while (setNodeDynamicAttributesIterator.hasNext()) {
+                String currNodeDynamicAttribute = setNodeDynamicAttributesIterator.next();
+                if (stringAttributes.contains(currNodeDynamicAttribute)) {
+                    bw.write("      <attribute id=\"" + currNodeDynamicAttribute + "\" title=\"" + currNodeDynamicAttribute + "\" type=\"string\"></attribute>");
+                } else {
+                    bw.write("      <attribute id=\"" + currNodeDynamicAttribute + "\" title=\"" + currNodeDynamicAttribute + "\" type=\"float\"></attribute>");
+                }
+                bw.newLine();
+            }
+            bw.write("    </attributes>");
+            bw.newLine();
         }
 
-        for (int i = 0; i < lengthEdgeAttributesArray; i++) {
-            bw.write("      <attribute id=\"" + edgeAttributes[i] + "\" title=\"" + edgeAttributes[i] + "\" type=\"float\"></attribute>");
+        if (edgeAttributes.length != 0) {
+
+            bw.write("    <attributes class=\"edge\" mode=\"dynamic\">");
             bw.newLine();
+            if (edgeWeight != null) {
+                if (stringAttributes.contains(edgeWeight)) {
+                    bw.write("      <attribute id=\"weight\" title=\"Weight\" type=\"string\"></attribute>");
+                } else {
+                    bw.write("      <attribute id=\"weight\" title=\"Weight\" type=\"float\"></attribute>");
+                }
+
+                bw.newLine();
+                lengthEdgeAttributesArray = edgeAttributes.length - 1;
+
+            } else {
+                lengthEdgeAttributesArray = edgeAttributes.length;
+            }
+            for (int i = 0; i < lengthEdgeAttributesArray; i++) {
+                if (stringAttributes.contains(edgeAttributes[i])) {
+                    bw.write("      <attribute id=\"" + edgeAttributes[i] + "\" title=\"" + edgeAttributes[i] + "\" type=\"string\"></attribute>");
+                } else {
+                    bw.write("      <attribute id=\"" + edgeAttributes[i] + "\" title=\"" + edgeAttributes[i] + "\" type=\"float\"></attribute>");
+                }
+                bw.newLine();
+            }
+            bw.write(
+                    "    </attributes>");
         }
 
-        bw.write("    </attributes>");
         bw.newLine();
-        bw.write("<nodes>");
+
+        bw.write(
+                "<nodes>");
         bw.newLine();
+
         bw.close();
 
         headerWriting.closeAndPrintClock();

@@ -160,11 +160,21 @@ public class Screen2 extends javax.swing.JFrame {
             }
 
             if (Screen2.count == 7 & OKButtonpressed) {
-                Main.selectStringAttributes();
+                Main.selectStaticAttributes();
                 OKButtonpressed = !OKButtonpressed;
             }
 
             if (Screen2.count == 8 & OKButtonpressed) {
+                Main.selectStringAttributes();
+                OKButtonpressed = !OKButtonpressed;
+            }
+
+            if (Screen2.count == 9 & OKButtonpressed) {
+                Main.selectAverageAttributes();
+                OKButtonpressed = !OKButtonpressed;
+            }
+
+            if (Screen2.count == 10 & OKButtonpressed) {
                 Main.selectTimeField();
                 OKButtonpressed = !OKButtonpressed;
                 GUIMain.screen4.setVisible(true);

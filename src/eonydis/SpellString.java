@@ -4,25 +4,21 @@
  */
 package eonydis;
 
+import java.util.HashMap;
 import org.joda.time.LocalDate;
 
 /**
  *
  * @author Clement
  */
-class Spell {
+class SpellString {
 
-    public final Float values[];
+    public final HashMap<String, String> stringValues;
     public final LocalDate date;
 
-    public Spell(LocalDate right,Float[] averageValues) {
-        
-        this.values = averageValues;
+    public SpellString(LocalDate right, HashMap<String, String> stringValues) {
+        this.stringValues = stringValues;
         this.date = right;
-        
-
     }
-    
-    
-    
+
 }
