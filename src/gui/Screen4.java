@@ -5,9 +5,13 @@
 package gui;
 
 import eonydis.Main;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -18,8 +22,12 @@ public class Screen4 extends javax.swing.JFrame {
     /**
      * Creates new form Screen4
      */
-    public Screen4() {
+    public Screen4() throws IOException {
         initComponents();
+        InputStream imgStream = this.getClass().getResourceAsStream("eonydis_3.png");
+        BufferedImage bi = ImageIO.read(imgStream);
+        ImageIcon myImg = new ImageIcon(bi);
+        this.setIconImage(myImg.getImage());
     }
 
     /**
@@ -44,6 +52,7 @@ public class Screen4 extends javax.swing.JFrame {
         jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("eonydis by www.clementlevallois.net");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -184,7 +193,11 @@ public class Screen4 extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new Screen4().setVisible(true);
+                try {
+                    new Screen4().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Screen4.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
             }
         });

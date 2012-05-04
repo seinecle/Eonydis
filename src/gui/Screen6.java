@@ -4,6 +4,14 @@
  */
 package gui;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author C. Levallois
@@ -13,8 +21,12 @@ public class Screen6 extends javax.swing.JFrame {
     /**
      * Creates new form Screen6
      */
-    public Screen6() {
+    public Screen6() throws IOException {
         initComponents();
+        InputStream imgStream = this.getClass().getResourceAsStream("eonydis_3.png");
+        BufferedImage bi = ImageIO.read(imgStream);
+        ImageIcon myImg = new ImageIcon(bi);
+        this.setIconImage(myImg.getImage());
     }
 
     /**
@@ -36,6 +48,7 @@ public class Screen6 extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("eonydis by www.clementlevallois.net");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -162,8 +175,13 @@ public class Screen6 extends javax.swing.JFrame {
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
-                new Screen6().setVisible(true);
+                try {
+                    new Screen6().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Screen6.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

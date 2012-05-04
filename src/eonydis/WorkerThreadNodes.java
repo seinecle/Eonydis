@@ -316,7 +316,7 @@ public class WorkerThreadNodes implements Runnable {
             PairDates<LocalDate, LocalDate> currPair = iteratorStartEndDates.next();
             LocalDate startDate = currPair.getLeft();
             LocalDate endDate = currPair.getRight();
-            System.out.println("printing the next date:" + startDate);
+//            System.out.println("printing the next date:" + startDate);
 
             oneNodeSpells.append("        <spell start=\"");
             oneNodeSpells.append(startDate).append("\" ");
@@ -324,7 +324,7 @@ public class WorkerThreadNodes implements Runnable {
             oneNodeSpells.append(endDate).append("\" ");
             oneNodeSpells.append("/>");
             oneNodeSpells.append("\n");
-            System.out.println("oneNodeSpells = " + oneNodeSpells.toString());
+//            System.out.println("oneNodeSpells = " + oneNodeSpells.toString());
         }//end of the iteration trough dates
 
 
@@ -344,7 +344,7 @@ public class WorkerThreadNodes implements Runnable {
         oneNodeFull.append("    </attvalues>\n");
         oneNodeFull.append("    <spells>\n");
         oneNodeFull.append(oneNodeSpells);
-        System.out.println("oneNodeSpells at this stage is: " + oneNodeSpells.toString());
+//        System.out.println("oneNodeSpells at this stage is: " + oneNodeSpells.toString());
         oneNodeFull.append("    </spells>\n");
         oneNodeFull.append("</node>\n");
 

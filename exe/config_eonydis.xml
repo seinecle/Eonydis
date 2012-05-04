@@ -2,7 +2,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>Eonydis.jar</jar>
-  <outfile>D:\Docs Pro Clement\NetBeansProjects\Eonydis\dist\eonydis.exe</outfile>
+  <outfile>D:\Docs Pro Clement\NetBeansProjects\Eonydis\dist\eonydis_1.1.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>

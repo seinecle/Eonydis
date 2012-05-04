@@ -7,9 +7,7 @@ package eonydis;
 import com.csvreader.CsvReader;
 import gui.GUIMain;
 import gui.Screen2;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -30,6 +28,8 @@ public class Main implements Runnable {
     static public String[] headers;
     static public boolean readHeaders;
     static CsvReader transactionsCsv;
+    String textDelimiter = "\"";
+    String fieldDelimiter = ",";
     static int j = 0;
     // Triple consists of: a full transaction, the pair of nodes involved in this transaction, the date of the transaction
     public static ArrayList<Triple<HashMap<String, String>, Pair<String, String>, LocalDate>> listTransactionsAndDates = new ArrayList();
@@ -81,12 +81,17 @@ public class Main implements Runnable {
     public static HashSet<Integer> setIndicesStringEdgeAttributes = new HashSet();
     public static HashSet<Integer> setIndicesStringNodeAttributes = new HashSet();
 
-    public Main(String wk, String file, String doAverage) {
+    public Main(String wk, String file, String doAverage, String fieldDelimiter, String textDelimiter) {
 
         pathFile = wk + "\\";
         nameFile = file;
         this.doAverage = Boolean.getBoolean(doAverage);
-
+        if (!textDelimiter.equals("")) {
+            this.textDelimiter = textDelimiter;
+        }
+        if (!fieldDelimiter.equals("")) {
+            this.fieldDelimiter = fieldDelimiter;
+        }
     }
 
     @Override
@@ -97,8 +102,13 @@ public class Main implements Runnable {
 
             javaGEXFoutput = pathFile + fileName + "_eonydis.gexf";
             System.out.println("file name is: " + javaGEXFoutput);
+            char textdelimiter = textDelimiter.charAt(0);
+            char fielddelimiter = fieldDelimiter.charAt(0);
 
-            transactionsCsv = new CsvReader(pathFile + nameFile);
+            transactionsCsv = new CsvReader(new BufferedReader(new FileReader(pathFile + nameFile)), fielddelimiter);
+            transactionsCsv.setTextQualifier(textdelimiter);
+            transactionsCsv.setUseTextQualifier(true);
+
             readHeaders = transactionsCsv.readHeaders();
             headers = transactionsCsv.getHeaders();
 
@@ -128,7 +138,7 @@ public class Main implements Runnable {
         target = (String) Screen2.listFields.getSelectedValue();
         System.out.println("target is: " + target);
         Screen2.model.removeElement(target);
-        Screen2.toBeSelected.setText("<html>select attribute(s) for <b>source nodes</b><br>(use shift and ctrl to select multiple attributes)<br>(no attributes? just click next)</html>");
+        Screen2.toBeSelected.setText("<html>select attribute(s) for <b>source nodes</b><br><br><i>use shift and ctrl to select multiple attributes<br>no attributes? just click next</i></html>");
         Screen2.count = 3;
     }
 
@@ -142,7 +152,7 @@ public class Main implements Runnable {
             sourceAttributes[i] = sourceAttributesObjects[i].toString();
         }
 
-        Screen2.toBeSelected.setText("<html>select attribute(s) for <b>target nodes</b><br>(use shift and ctrl to select multiple attributes)<br>(no attributes? just click next)</html>");
+        Screen2.toBeSelected.setText("<html>select attribute(s) for <b>target nodes</b><br><br><i>use shift and ctrl to select multiple attributes<br>no attributes? just click next</i></html>");
         Screen2.count = 4;
     }
 
@@ -156,7 +166,7 @@ public class Main implements Runnable {
             targetAttributes[i] = targetAttributesObjects[i].toString();
         }
 
-        Screen2.toBeSelected.setText("<html>select one attribute for <b>edge weight</b><br>(no attribute for weight? just click next)</html>");
+        Screen2.toBeSelected.setText("<html>select one attribute for <b>edge weight</b><br><br><i>no attribute for weight? just click next</i></html>");
         Screen2.count = 5;
 
 
@@ -178,7 +188,7 @@ public class Main implements Runnable {
 
         Screen2.model.removeElement(edgeWeight);
 
-        Screen2.toBeSelected.setText("<html>select other <b>edge attribute(s)</b><br>(use shift and ctrl to select multiple attributes)<br>(no attributes? just click next)</html>");
+        Screen2.toBeSelected.setText("<html>select other <b>edge attribute(s)</b><br><br><i>use shift and ctrl to select multiple attributes<br>no attributes? just click next</i></html>");
         Screen2.count = 6;
 
     }
@@ -193,7 +203,7 @@ public class Main implements Runnable {
             edgeAttributes[i] = edgeAttributesObjects[i].toString();
 
         }
-        Screen2.toBeSelected.setText("<html>select <b>time field<b></html>");
+        Screen2.toBeSelected.setText("<html>select <b>time field</b></html>");
         Screen2.count = 7;
 
 
@@ -210,8 +220,8 @@ public class Main implements Runnable {
 
         //this appendix collates all selected attributes - for nodes and edges - into a single array
         //this will be useful later for the indexing of which attributes will be Float, and which will be String
-        System.out.println("length edge Attributes is: " + edgeAttributes.length);
-        System.out.println("length node Attributes is: " + nodeAttributes.length);
+        System.out.println("number of edge Attributes is: " + edgeAttributes.length);
+        System.out.println("number of node Attributes is: " + nodeAttributes.length);
 
         tempAllAttributes = new String[edgeAttributes.length + nodeAttributes.length];
         System.arraycopy(edgeAttributes, 0, tempAllAttributes, 0, edgeAttributes.length);
@@ -224,7 +234,7 @@ public class Main implements Runnable {
         for (int i = 0; i < tempAllAttributes.length; i++) {
             Screen2.model.add(i, tempAllAttributes[i]);
         }
-        Screen2.toBeSelected.setText("<html>among the attributes you selected,<br> which are <b>static</b> attributes?<br> (attributes not time-dependent).</html>");
+        Screen2.toBeSelected.setText("<html>among the attributes you selected,<br> which are <b>static</b>?<br><br><i>static attributes are not time-dependent. For example, if your nodes are persons,<br>this could be an attribute representing their gender or birth date</i><br><br><i>use shift and ctrl to select multiple attributes<br>no attributes? just click next</i>.</html>");
 
     }
 
@@ -233,13 +243,13 @@ public class Main implements Runnable {
         setNodeStaticAttributes = new HashSet();
 
         for (int i = 0; i < staticAttributesObjects.length; i++) {
-            System.out.println("selected attribute(s) to be averaged: " + staticAttributesObjects[i].toString());
+            System.out.println("selected static attribute: " + staticAttributesObjects[i].toString());
             setNodeStaticAttributes.add(staticAttributesObjects[i].toString());
 
         }
 
 
-        Screen2.toBeSelected.setText("<html>among the attributes you selected,<br> which are <b>textual</b> attributes?<br> (attributes representing textual information).</html>");
+        Screen2.toBeSelected.setText("<html>among the attributes you selected,<br> which are <b>textual</b>?<br><br><i>attributes representing textual information, as opposed to numbers</i>.<br><br><i>use shift and ctrl to select multiple attributes<br>no attributes? just click next</i></html>");
 
         Screen2.model.clear();
 
@@ -263,7 +273,7 @@ public class Main implements Runnable {
         }
 
 
-        Screen2.toBeSelected.setText("<html>select numerical attributes to be <b>averaged<b></html>");
+        Screen2.toBeSelected.setText("<html>select numerical attributes to be <b>averaged</b><br><br><i>This applies to the case when two attributes are found at the same time.<br> For example, when there are several calls made the same day between two persons.<br>Should the duration of their calls for the day be the sum or the average of each call?<br>By default, values are summed, but you can choose to average them.</i><br><br><i>use shift and ctrl to select multiple attributes<br>no attributes? just click next</i></html>");
 
         Screen2.model.clear();
         int indexFloatAttribute = 0;
@@ -290,7 +300,7 @@ public class Main implements Runnable {
         }
 
 
-        Screen2.toBeSelected.setText("<html>select <b>time field<b></html>");
+        Screen2.toBeSelected.setText("<html>select <b>time field</b><br><br><i>The time field is the column in your csv file where the timestamp of each transaction is recorded</i></html>");
 
         Screen2.model.clear();
 
@@ -322,22 +332,22 @@ public class Main implements Runnable {
         Clock readTransactions = new Clock("reading each line of the csv file");
 
         int indexStartYear = userDefinedTimeFormat.indexOf("y");
-        System.out.println("indexStartYear is: " + indexStartYear);
+        //System.out.println("indexStartYear is: " + indexStartYear);
 
         int indexStartMonth = userDefinedTimeFormat.indexOf("m");
-        System.out.println("indexStartMonth is: " + indexStartMonth);
+        //System.out.println("indexStartMonth is: " + indexStartMonth);
 
         int indexStartDay = userDefinedTimeFormat.indexOf("d");
-        System.out.println("indexStartDay is: " + indexStartDay);
+        //System.out.println("indexStartDay is: " + indexStartDay);
 
         int indexStartHour = userDefinedTimeFormat.indexOf("h");
-        System.out.println("indexStartHour is: " + indexStartHour);
+        //System.out.println("indexStartHour is: " + indexStartHour);
 
         int indexStartMinute = userDefinedTimeFormat.indexOf("i");
-        System.out.println("indexStartMinute is: " + indexStartMinute);
+        //System.out.println("indexStartMinute is: " + indexStartMinute);
 
         int indexStartSecond = userDefinedTimeFormat.indexOf("s");
-        System.out.println("indexStartSecond is: " + indexStartSecond);
+        //System.out.println("indexStartSecond is: " + indexStartSecond);
 
         userDefinedTimeFormat = userDefinedTimeFormat.replace("yyyy", "(\\d*)");
         userDefinedTimeFormat = userDefinedTimeFormat.replace("#", ".");
@@ -346,7 +356,7 @@ public class Main implements Runnable {
         userDefinedTimeFormat = userDefinedTimeFormat.replace("hh", "(\\d*)");
         userDefinedTimeFormat = userDefinedTimeFormat.replace("ii", "(\\d*)");
         userDefinedTimeFormat = userDefinedTimeFormat.replace("ss", "(\\d*)");
-        System.out.println("regex pattern is: " + userDefinedTimeFormat);
+        //System.out.println("regex pattern is: " + userDefinedTimeFormat);
 
 
         if (indexStartYear != -1) {
@@ -376,7 +386,7 @@ public class Main implements Runnable {
             int currRank = itTimeFields.next();
 
             orderOfTimeFieldsInUserPattern[j] = mapPOSinTimePattern.get(currRank);
-            System.out.println("group number for " + orderOfTimeFieldsInUserPattern[j] + " is " + (j + 1));
+            //System.out.println("group number for " + orderOfTimeFieldsInUserPattern[j] + " is " + (j + 1));
             j++;
         }
 

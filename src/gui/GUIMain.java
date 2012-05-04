@@ -20,7 +20,6 @@ public class GUIMain {
     public static Screen5 screen5;
     public static Screen6 screen6;
 
-
     public static void main(String args[]) {
         /*
          * Set the Nimbus look and feel

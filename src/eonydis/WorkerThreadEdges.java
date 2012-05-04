@@ -80,9 +80,9 @@ public class WorkerThreadEdges implements Runnable {
             LocalDate currDate = currTrans.getRight();
             HashMap<String, String> currAllFieldValues = currTrans.getLeft();
 
-            System.out.println("currPair: " + currPair.getLeft() + " " + currPair.getRight());
-            System.out.println("refNodesPair: " + refNodesPair.getLeft() + " " + refNodesPair.getRight());
-            System.out.println("we are in the first loop");
+//            System.out.println("currPair: " + currPair.getLeft() + " " + currPair.getRight());
+//            System.out.println("refNodesPair: " + refNodesPair.getLeft() + " " + refNodesPair.getRight());
+//            System.out.println("we are in the first loop");
 
             //only if the current edge (pair of items) is present should the transaction be considered
             if (currPair.equals(refNodesPair)) {
@@ -101,7 +101,7 @@ public class WorkerThreadEdges implements Runnable {
 
                 while (setEdgeAttributesIterator.hasNext()) {
                     String currEdgeAttribute = setEdgeAttributesIterator.next();
-                    System.out.println("in edge worker - curren edge attribute is " + currEdgeAttribute);
+//                    System.out.println("in edge worker - curren edge attribute is " + currEdgeAttribute);
 
                     if (Main.stringAttributes.contains(currEdgeAttribute)) {
 
