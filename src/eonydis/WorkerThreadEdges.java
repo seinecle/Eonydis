@@ -71,7 +71,7 @@ public class WorkerThreadEdges implements Runnable {
         boolean oneStringAttributeDetected = false;
 
         // loop through all transactions, starting at the current one (see comment above)
-        // this iteration produces a map of dates + (sum or average) of the corresponding values
+        // this iteration produces a map of dates + (sum or average) of the corresponding values for each attribute
 
         while (listTransactionsAndDatesIterator.hasNext()) {
 
@@ -80,6 +80,8 @@ public class WorkerThreadEdges implements Runnable {
             LocalDate currDate = currTrans.getRight();
             HashMap<String, String> currAllFieldValues = currTrans.getLeft();
 
+
+
 //            System.out.println("currPair: " + currPair.getLeft() + " " + currPair.getRight());
 //            System.out.println("refNodesPair: " + refNodesPair.getLeft() + " " + refNodesPair.getRight());
 //            System.out.println("we are in the first loop");
@@ -87,9 +89,12 @@ public class WorkerThreadEdges implements Runnable {
             //only if the current edge (pair of items) is present should the transaction be considered
             if (currPair.equals(refNodesPair)) {
 
+                //add the date to an ordered multiset. The edge creation will be based on an iteration of this (chronologically) ordered set
+                setMultiDates.add(currDate);
 
                 //create an array of strings to record the string values of this transaction
                 HashMap<String, String> stringValues = new HashMap();
+                HashMap<String, Float> storedFloatValues = new HashMap();
 
                 //creates a set of the edge attributes
                 setEdgeAttributes.addAll(Arrays.asList(Main.edgeAttributes));
@@ -118,32 +123,31 @@ public class WorkerThreadEdges implements Runnable {
                     }
 
                     //end of the case STRING values. Beginning case FLOAT values
-                    //This try-catch treats null values for attributes as zeros.
+
 
                     try {
                         currValueFloat = Float.parseFloat(currTrans.getLeft().get(currEdgeAttribute));
+
+                        
+//                          for debugging purposes
+//                        if (currTrans.getLeft().get(currEdgeAttribute).equals("-0.56140")) {
+//                            System.out.println("currValueFloat" + currValueFloat);
+//                        }
                     } catch (NumberFormatException e) {
                         currValueFloat = (float) 0;
                     }
 
-                    HashMap<String, Float> storedFloatValues = new HashMap();
+
 
                     //if the list of (dates, value) already contains the date of the current transaction
                     if (mapValuesFloat.containsKey(currDate)) {
 
-                        //retrieve the current value stored for the date
+                        //retrieve the current values of all edge attributes stored for the date
                         storedFloatValues = mapValuesFloat.get(currDate);
-
-
-                        //These two lines treat null values for attributes as zeros.
-                        if (storedFloatValues.get(currEdgeAttribute) == null) {
-                            storedFloatValues.put(currEdgeAttribute, (float) 0);
+                        if(!storedFloatValues.containsKey(currEdgeAttribute)){
+                            storedFloatValues.put(currEdgeAttribute,(float)0);
                         }
-
-                        //add the currValue to the storedValue
                         storedFloatValues.put(currEdgeAttribute, storedFloatValues.get(currEdgeAttribute) + currValueFloat);
-
-                        //reinput the new storedValue in the list of (dates,Values)
                         mapValuesFloat.put(currDate, storedFloatValues);
 
                     } else {
@@ -163,8 +167,7 @@ public class WorkerThreadEdges implements Runnable {
                     mapValuesString.put(currDate, stringValues);
                 }
 
-                //add the date to an ordered multiset. The edge creation will be based on an iteration of this (chronologically) ordered set
-                setMultiDates.add(currDate);
+
 
 
             }
@@ -197,7 +200,7 @@ public class WorkerThreadEdges implements Runnable {
 
                 Map.Entry<String, Float> currEntry = mapValuesFloatCurrDateIterator.next();
 
-                if (Main.doAverage) {
+                if (Main.averageAttributes.contains(currEntry.getKey())) {
                     tempFloatValues.put(currEntry.getKey(), currEntry.getValue() / (float) setMultiDates.count(spellDate));
                 } else {
                     tempFloatValues.put(currEntry.getKey(), currEntry.getValue());
@@ -306,8 +309,8 @@ public class WorkerThreadEdges implements Runnable {
         // We now have a setMultiDates of all the dates when the two banks interact
         // This setMultiDates needs to be modified to delete the dates that are consecutive
         setStartEndDates = ConsecutiveSpellsCleaner.doCleaning(setMultiDates);
-        
-        
+
+
         //!!!! iterates through all the dates for this edge and creates corresponding spells
         Iterator<PairDates> iteratorStartEndDates = setStartEndDates.iterator();
         while (iteratorStartEndDates.hasNext()) {

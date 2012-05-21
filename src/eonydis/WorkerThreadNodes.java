@@ -62,13 +62,15 @@ public class WorkerThreadNodes implements Runnable {
             HashMap<String, String> currAllFieldValues = currNodeAndDate.getRight();
 
 
-            HashMap<String, String> stringValues = new HashMap();
 
             //when the Node of interest is found in the list, add the corresponding date to a set of dates for this Node
             if (currNodeId.equals(currNode)) {
 
 
 
+                HashMap<String, Float> storedFloatValues = new HashMap();
+                HashMap<String, String> stringValues = new HashMap();
+                setMultiDates.add(currDate);
 
                 setNodeAttributes.clear();
 
@@ -142,26 +144,16 @@ public class WorkerThreadNodes implements Runnable {
                         currValueFloat = (float) 0;
                     }
 
-                    HashMap<String, Float> storedFloatValues = new HashMap();
-                    //if the list of (dates, values) already contains the date of the current transaction
+
+                    //if the list of (dates, value) already contains the date of the current transaction
                     if (mapValuesFloat.containsKey(currDate)) {
 
-                        //retrieve the current value stored for the date
+                        //retrieve the current values of all edge attributes stored for the date
                         storedFloatValues = mapValuesFloat.get(currDate);
-
-                        //add the currValue to the storedValue
-                        //System.out.println("storedValue[j] " + storedValue[j]);
-                        //System.out.println("currValue " + currValue);
-
-                        //These two lines treat null values for attributes as zeros.
-                        if (storedFloatValues.get(currNodeAttribute) == null) {
-                            storedFloatValues.put(currNodeAttribute, (float) 0);
+                        if(!storedFloatValues.containsKey(currNodeAttribute)){
+                            storedFloatValues.put(currNodeAttribute,(float)0);
                         }
-
-                        //add the currValue to the storedValue
                         storedFloatValues.put(currNodeAttribute, storedFloatValues.get(currNodeAttribute) + currValueFloat);
-
-                        //reinput the new storedValue in the list of (dates,Values)
                         mapValuesFloat.put(currDate, storedFloatValues);
 
                     } else {
@@ -180,7 +172,7 @@ public class WorkerThreadNodes implements Runnable {
                 }
 
                 //add the date to an ordered multiset
-                setMultiDates.add(currDate);
+
             }
 
 

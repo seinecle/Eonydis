@@ -59,6 +59,7 @@ public class Transaction {
 //            year = Integer.valueOf(arrayTime[2].split(" ")[0]);
 
             String timeField = mapTransFull.get(Main.timeField);
+//            System.out.println("timeField"+timeField);
             month = Integer.valueOf(timeField.replaceAll(Main.userDefinedTimeFormat, "$"+Main.mapOrderTimeFields.get("month")));
             day = Integer.valueOf(timeField.replaceAll(Main.userDefinedTimeFormat, "$"+Main.mapOrderTimeFields.get("day")));
             year = Integer.valueOf(timeField.replaceAll(Main.userDefinedTimeFormat, "$"+Main.mapOrderTimeFields.get("year")));
